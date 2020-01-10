@@ -1,12 +1,12 @@
-package storage;
+package com.vitalykhan.webapps.storage;
 
-import model.Resume;
+import com.vitalykhan.webapps.model.Resume;
 
 import java.util.Arrays;
 import java.util.Objects;
 
 /**
- * Array based storage for Resumes
+ * Array based resumes
  */
 public class ArrayStorage {
     private Resume[] storage = new Resume[10000];
@@ -18,7 +18,7 @@ public class ArrayStorage {
     }
 
     public void update(Resume r) {
-        if (uuidIsNull(r.uuid)) {
+        if (uuidIsNull(r.getUuid())) {
             return;
         }
 
@@ -31,16 +31,16 @@ public class ArrayStorage {
     }
 
     /**
-     * Searches for given model.Resume in storage.
+     * Searches for given Resume in storage.
      *
-     * @param resume given model.Resume
-     * @return index of found model.Resume or -1 if not found
+     * @param resume given resume
+     * @return index of found resume or -1 if not found
      */
     private int resumeExists(Resume resume) {
         int result = -1;
 
         for (int i = 0; i < size; i++) {
-            if (storage[i].uuid.equals(resume.uuid)) {
+            if (storage[i].getUuid().equals(resume.getUuid())) {
                 return i;
             }
         }
@@ -48,7 +48,7 @@ public class ArrayStorage {
     }
 
     public void save(Resume r) {
-        if (uuidIsNull(r.uuid)) {
+        if (uuidIsNull(r.getUuid())) {
             return;
         }
 
@@ -68,7 +68,7 @@ public class ArrayStorage {
         int index;
         Resume resume = new Resume();
 
-        resume.uuid = uuid;
+        resume.setUuid(uuid);
 
         if ((index = resumeExists(resume)) == -1) {
             System.out.println("Resume doesn't exists in DB!");
@@ -87,7 +87,7 @@ public class ArrayStorage {
         if (uuidIsNull(uuid)) {
             return;
         }
-        resume.uuid = uuid;
+        resume.setUuid(uuid);
         if ((index = resumeExists(resume)) == -1) {
             System.out.println("Resume doesn't exists in DB!");
         } else {
@@ -107,7 +107,7 @@ public class ArrayStorage {
 
 //        return Arrays.stream(storage)
 //                .limit(size)
-//                .toArray(model.Resume[]::new);
+//                .toArray(Resume[]::new);
     }
 
     public int size() {
