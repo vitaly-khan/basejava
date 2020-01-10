@@ -18,15 +18,15 @@ public class ArrayStorage {
     }
 
     public void update(Resume r) {
-        if (uuidIsNull(r.getUuid())) {
+        if (entityIsNull(r)) {
             return;
         }
 
         int index = 0;
-        if (resumeExists(r) != -1) {
+        if (getIndex(r) != -1) {
             storage[index] = r;
         } else {
-            System.out.println("Resume doesn't exists in DB!");
+            System.out.println("Resume doesn't exist in DB!");
         }
     }
 
@@ -36,9 +36,8 @@ public class ArrayStorage {
      * @param resume given resume
      * @return index of found resume or -1 if not found
      */
-    private int resumeExists(Resume resume) {
+    private int getIndex(Resume resume) {
         int result = -1;
-
         for (int i = 0; i < size; i++) {
             if (storage[i].getUuid().equals(resume.getUuid())) {
                 return i;
@@ -48,7 +47,7 @@ public class ArrayStorage {
     }
 
     public void save(Resume r) {
-        if (uuidIsNull(r.getUuid())) {
+        if (entityIsNull(r)) {
             return;
         }
 
@@ -57,46 +56,50 @@ public class ArrayStorage {
             return;
         }
 
-        if (resumeExists(r) == -1) {
+        if (getIndex(r) == -1) {
             storage[size++] = r;
         } else {
-            System.out.println("Resume exists in DB already!");
+            System.out.printf("Resume with id=%s already exists in DB!", r.getUuid());
         }
     }
 
     public Resume get(String uuid) {
-        int index;
-        Resume resume = new Resume();
-
-        resume.setUuid(uuid);
-
-        if ((index = resumeExists(resume)) == -1) {
-            System.out.println("Resume doesn't exists in DB!");
+        if (entityIsNull(uuid)) {
             return null;
         }
-        else {
-            return storage[index];
+
+
+        Resume resume = new Resume();
+        resume.setUuid(uuid);
+
+        int index = getIndex(resume);
+        if (index == -1) {
+            System.out.printf("Resume %s doesn't exist in DB!", resume);
+            return null;
         }
+        return storage[index];
     }
 
     public void delete(String uuid) {
-        int index;
-        Resume resume = new Resume();
-
-
-        if (uuidIsNull(uuid)) {
+        if (entityIsNull(uuid)) {
             return;
         }
+
+        Resume resume = new Resume();
         resume.setUuid(uuid);
-        if ((index = resumeExists(resume)) == -1) {
-            System.out.println("Resume doesn't exists in DB!");
-        } else {
-            for (int i = index; i < size - 1; i++) {
-                storage[i] = storage[i + 1];
-            }
-            size--;
-            storage[size] = null;
+
+
+        int index = getIndex(resume);
+        if (index == -1) {
+            System.out.printf("Resume %s doesn't exist in DB!", resume);
+            return;
         }
+
+        for (int i = index; i < size - 1; i++) {
+            storage[i] = storage[i + 1];
+        }
+        size--;
+        storage[size] = null;
     }
 
     /**
@@ -114,9 +117,9 @@ public class ArrayStorage {
         return size;
     }
 
-    private boolean uuidIsNull(String uuid) {
-        if (Objects.isNull(uuid)) {
-            System.out.println("Wrong uuid!");
+    private <T> boolean entityIsNull(T obj) {
+        if (Objects.isNull(obj)) {
+            System.out.println("Wrong parameter!");
             return true;
         }
         return false;
