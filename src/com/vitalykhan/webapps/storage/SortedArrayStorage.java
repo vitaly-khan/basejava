@@ -2,6 +2,8 @@ package com.vitalykhan.webapps.storage;
 
 import com.vitalykhan.webapps.model.Resume;
 
+import java.util.Arrays;
+
 public class SortedArrayStorage extends AbstractArrayStorage {
     @Override
     public void update(Resume r) {
@@ -25,6 +27,6 @@ public class SortedArrayStorage extends AbstractArrayStorage {
 
     @Override
     int getIndex(Resume resume) {
-        return 0;
+        return Arrays.binarySearch(storage, 0, size, resume);
     }
 }

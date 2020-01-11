@@ -3,7 +3,6 @@ package com.vitalykhan.webapps.storage;
 import com.vitalykhan.webapps.model.Resume;
 
 import java.util.Arrays;
-import java.util.Objects;
 
 public abstract class AbstractArrayStorage implements Storage {
     static final int STORAGE_LIMIT = 10000;
@@ -29,13 +28,35 @@ public abstract class AbstractArrayStorage implements Storage {
         return Arrays.copyOf(storage, size);
     }
 
+    @Override
+    public Resume get(String uuid) {
+        Resume resume = new Resume();
+        resume.setUuid(uuid);
 
-    <T> boolean entityIsNull(T obj) {
-        if (Objects.isNull(obj)) {
-            System.out.println("Wrong parameter!");
-            return true;
+        int index = getIndex(resume);
+        if (index == -1) {
+            System.out.printf("Resume %s doesn't exist in DB!", resume);
+            return null;
         }
-        return false;
+        return storage[index];
+    }
+
+    @Override
+    public void delete(String uuid) {
+        Resume resume = new Resume();
+        resume.setUuid(uuid);
+
+        int index = getIndex(resume);
+        if (index == -1) {
+            System.out.printf("Resume %s doesn't exist in DB!%n", resume);
+            return;
+        }
+
+        for (int i = index; i < size - 1; i++) {
+            storage[i] = storage[i + 1];
+        }s
+        size--;
+        storage[size] = null;
     }
 
     /**

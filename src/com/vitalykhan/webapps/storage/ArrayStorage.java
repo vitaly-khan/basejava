@@ -9,10 +9,6 @@ public class ArrayStorage extends AbstractArrayStorage {
 
     @Override
     public void update(Resume r) {
-        if (entityIsNull(r)) {
-            return;
-        }
-
         int index = 0;
         if (getIndex(r) != -1) {
             storage[index] = r;
@@ -23,10 +19,6 @@ public class ArrayStorage extends AbstractArrayStorage {
 
     @Override
     public void save(Resume r) {
-        if (entityIsNull(r)) {
-            return;
-        }
-
         if (size == STORAGE_LIMIT) {
             System.out.println("The storage is full! Saving is impossible.");
             return;
@@ -35,50 +27,10 @@ public class ArrayStorage extends AbstractArrayStorage {
         if (getIndex(r) == -1) {
             storage[size++] = r;
         } else {
-            System.out.printf("Resume with id=%s already exists in DB!", r.getUuid());
+            System.out.printf("Resume with id=%s already exists in DB!%n", r.getUuid());
         }
     }
 
-    @Override
-    public Resume get(String uuid) {
-        if (entityIsNull(uuid)) {
-            return null;
-        }
-
-
-        Resume resume = new Resume();
-        resume.setUuid(uuid);
-
-        int index = getIndex(resume);
-        if (index == -1) {
-            System.out.printf("Resume %s doesn't exist in DB!", resume);
-            return null;
-        }
-        return storage[index];
-    }
-
-    @Override
-    public void delete(String uuid) {
-        if (entityIsNull(uuid)) {
-            return;
-        }
-
-        Resume resume = new Resume();
-        resume.setUuid(uuid);
-
-
-        int index = getIndex(resume);
-        if (index == -1) {
-            System.out.printf("Resume %s doesn't exist in DB!", resume);
-            return;
-        }
-
-        for (int i = index; i < size - 1; i++) {
-            storage[i] = storage[i + 1];
-        }
-        size--;
-        storage[size] = null;
-    }
 
     int getIndex(Resume resume) {
         int result = -1;
