@@ -5,25 +5,20 @@ import com.vitalykhan.webapps.model.Resume;
 import java.util.Arrays;
 
 public class SortedArrayStorage extends AbstractArrayStorage {
-    @Override
-    public void update(Resume r) {
 
+    @Override
+    public void saveProcessing(Resume r) {
+        final int index = -getIndex(r) - 1;
+        System.arraycopy(storage, index, storage, index + 1, size - index);
+        storage[index] = r;
     }
 
     @Override
-    public void save(Resume r) {
-
+    void deleteProcessing(int index) {
+        System.arraycopy(storage, index + 1, storage, index, size - index - 1);
     }
 
-    @Override
-    public Resume get(String uui) {
-        return null;
-    }
 
-    @Override
-    public void delete(String uui) {
-
-    }
 
     @Override
     int getIndex(Resume resume) {

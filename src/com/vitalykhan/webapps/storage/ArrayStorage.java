@@ -8,29 +8,14 @@ import com.vitalykhan.webapps.model.Resume;
 public class ArrayStorage extends AbstractArrayStorage {
 
     @Override
-    public void update(Resume r) {
-        int index = 0;
-        if (getIndex(r) != -1) {
-            storage[index] = r;
-        } else {
-            System.out.println("Resume doesn't exist in DB!");
-        }
+    public void saveProcessing(Resume r) {
+            storage[size] = r;
     }
 
     @Override
-    public void save(Resume r) {
-        if (size == STORAGE_LIMIT) {
-            System.out.println("The storage is full! Saving is impossible.");
-            return;
-        }
-
-        if (getIndex(r) == -1) {
-            storage[size++] = r;
-        } else {
-            System.out.printf("Resume with id=%s already exists in DB!%n", r.getUuid());
-        }
+    void deleteProcessing(int index) {
+        storage[index] = storage[size - 1];
     }
-
 
     int getIndex(Resume resume) {
         int result = -1;

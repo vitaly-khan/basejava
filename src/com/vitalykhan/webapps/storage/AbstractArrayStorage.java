@@ -20,6 +20,33 @@ public abstract class AbstractArrayStorage implements Storage {
         return size;
     }
 
+    @Override
+    public final void update(Resume r) {
+        final int index = getIndex(r);
+        if (index < 0) {
+            System.out.printf("Resume with id='%s' doesn't exist in DB!%n", r.getUuid());
+            return;
+        }
+        storage[index] = r;
+    }
+
+    @Override
+    public void save(Resume r) {
+        if (size == STORAGE_LIMIT) {
+            System.out.println("The storage is full! Saving is impossible.");
+            return;
+        }
+
+        if (getIndex(r) >= 0) {
+            System.out.printf("Resume with id='%s' already exists in DB!%n", r.getUuid());
+            return;
+        }
+        saveProcessing(r);
+        size++;
+    }
+
+    abstract void saveProcessing(Resume resume);
+
     /**
      * @return array, contains only Resumes in storage (without null)
      */
@@ -29,35 +56,35 @@ public abstract class AbstractArrayStorage implements Storage {
     }
 
     @Override
-    public Resume get(String uuid) {
+    public final Resume get(String uuid) {
         Resume resume = new Resume();
         resume.setUuid(uuid);
 
-        int index = getIndex(resume);
-        if (index == -1) {
-            System.out.printf("Resume %s doesn't exist in DB!", resume);
+        final int index = getIndex(resume);
+        if (index < 0) {
+            System.out.printf("Resume with id='%s' doesn't exist in DB!%n", resume.getUuid());
             return null;
         }
         return storage[index];
     }
 
     @Override
-    public void delete(String uuid) {
+    public final void delete(String uuid) {
         Resume resume = new Resume();
         resume.setUuid(uuid);
 
-        int index = getIndex(resume);
-        if (index == -1) {
-            System.out.printf("Resume %s doesn't exist in DB!%n", resume);
+        final int index = getIndex(resume);
+        if (index < 0) {
+            System.out.printf("Resume with id='%s' doesn't exist in DB!%n", resume.getUuid());
             return;
         }
 
-        for (int i = index; i < size - 1; i++) {
-            storage[i] = storage[i + 1];
-        }s
+        deleteProcessing(index);
         size--;
         storage[size] = null;
     }
+
+    abstract void deleteProcessing(int index);
 
     /**
      * Searches for given Resume in storage.
