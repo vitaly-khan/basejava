@@ -2,22 +2,10 @@ package com.vitalykhan.webapps.storage;
 
 import com.vitalykhan.webapps.model.Resume;
 
-import java.util.Arrays;
-import java.util.Objects;
-
 /**
  * Array based resumes
  */
-public class ArrayStorage implements Storage {
-    public static final int STORAGE_LIMIT = 10000;
-    private Resume[] storage = new Resume[STORAGE_LIMIT];
-    private int size = 0;
-
-    @Override
-    public void clear() {
-        Arrays.fill(storage, 0, size, null);
-        size = 0;
-    }
+public class ArrayStorage extends AbstractArrayStorage {
 
     @Override
     public void update(Resume r) {
@@ -31,22 +19,6 @@ public class ArrayStorage implements Storage {
         } else {
             System.out.println("Resume doesn't exist in DB!");
         }
-    }
-
-    /**
-     * Searches for given Resume in storage.
-     *
-     * @param resume given resume
-     * @return index of found resume or -1 if not found
-     */
-    private int getIndex(Resume resume) {
-        int result = -1;
-        for (int i = 0; i < size; i++) {
-            if (storage[i].equals(resume)) {
-                return i;
-            }
-        }
-        return result;
     }
 
     @Override
@@ -108,28 +80,14 @@ public class ArrayStorage implements Storage {
         storage[size] = null;
     }
 
-    /**
-     * @return array, contains only Resumes in storage (without null)
-     */
-    @Override
-    public Resume[] getAll() {
-        return Arrays.copyOf(storage, size);
-
-//        return Arrays.stream(storage)
-//                .limit(size)
-//                .toArray(Resume[]::new);
-    }
-
-    @Override
-    public int size() {
-        return size;
-    }
-
-    private <T> boolean entityIsNull(T obj) {
-        if (Objects.isNull(obj)) {
-            System.out.println("Wrong parameter!");
-            return true;
+    int getIndex(Resume resume) {
+        int result = -1;
+        for (int i = 0; i < size; i++) {
+            if (storage[i].equals(resume)) {
+                return i;
+            }
         }
-        return false;
+        return result;
     }
+
 }
