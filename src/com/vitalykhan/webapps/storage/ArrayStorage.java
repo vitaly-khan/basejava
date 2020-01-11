@@ -8,15 +8,18 @@ import java.util.Objects;
 /**
  * Array based resumes
  */
-public class ArrayStorage {
-    private Resume[] storage = new Resume[10000];
+public class ArrayStorage implements Storage {
+    public static final int STORAGE_LIMIT = 10000;
+    private Resume[] storage = new Resume[STORAGE_LIMIT];
     private int size = 0;
 
+    @Override
     public void clear() {
         Arrays.fill(storage, 0, size, null);
         size = 0;
     }
 
+    @Override
     public void update(Resume r) {
         if (entityIsNull(r)) {
             return;
@@ -39,19 +42,20 @@ public class ArrayStorage {
     private int getIndex(Resume resume) {
         int result = -1;
         for (int i = 0; i < size; i++) {
-            if (storage[i].getUuid().equals(resume.getUuid())) {
+            if (storage[i].equals(resume)) {
                 return i;
             }
         }
         return result;
     }
 
+    @Override
     public void save(Resume r) {
         if (entityIsNull(r)) {
             return;
         }
 
-        if (size == storage.length) {
+        if (size == STORAGE_LIMIT) {
             System.out.println("The storage is full! Saving is impossible.");
             return;
         }
@@ -63,6 +67,7 @@ public class ArrayStorage {
         }
     }
 
+    @Override
     public Resume get(String uuid) {
         if (entityIsNull(uuid)) {
             return null;
@@ -80,6 +85,7 @@ public class ArrayStorage {
         return storage[index];
     }
 
+    @Override
     public void delete(String uuid) {
         if (entityIsNull(uuid)) {
             return;
@@ -105,6 +111,7 @@ public class ArrayStorage {
     /**
      * @return array, contains only Resumes in storage (without null)
      */
+    @Override
     public Resume[] getAll() {
         return Arrays.copyOf(storage, size);
 
@@ -113,6 +120,7 @@ public class ArrayStorage {
 //                .toArray(Resume[]::new);
     }
 
+    @Override
     public int size() {
         return size;
     }
