@@ -1,5 +1,8 @@
 package com.vitalykhan.webapps.storage;
 
+import com.vitalykhan.webapps.exception.ResumeDoesntExistInStorageException;
+import com.vitalykhan.webapps.exception.ResumeExistsInStorageException;
+import com.vitalykhan.webapps.exception.StorageException;
 import com.vitalykhan.webapps.model.Resume;
 
 import java.util.Arrays;
@@ -24,8 +27,7 @@ public abstract class AbstractArrayStorage implements Storage {
     public final void update(Resume r) {
         final int index = getIndex(r);
         if (index < 0) {
-            System.out.printf("Resume with id='%s' doesn't exist in DB!%n", r.getUuid());
-            return;
+            throw new ResumeDoesntExistInStorageException(r.getUuid());
         }
         storage[index] = r;
     }
@@ -33,13 +35,11 @@ public abstract class AbstractArrayStorage implements Storage {
     @Override
     public void save(Resume r) {
         if (size == STORAGE_LIMIT) {
-            System.out.println("The storage is full! Saving is impossible.");
-            return;
+            throw new StorageException("Storage overflow", r.getUuid());
         }
 
         if (getIndex(r) >= 0) {
-            System.out.printf("Resume with id='%s' already exists in DB!%n", r.getUuid());
-            return;
+            throw new ResumeExistsInStorageException(r.getUuid());
         }
         saveProcessing(r);
         size++;
@@ -57,26 +57,22 @@ public abstract class AbstractArrayStorage implements Storage {
 
     @Override
     public final Resume get(String uuid) {
-        Resume resume = new Resume();
-        resume.setUuid(uuid);
+        Resume resume = new Resume(uuid);
 
         final int index = getIndex(resume);
         if (index < 0) {
-            System.out.printf("Resume with id='%s' doesn't exist in DB!%n", resume.getUuid());
-            return null;
+            throw new ResumeDoesntExistInStorageException(uuid);
         }
         return storage[index];
     }
 
     @Override
     public final void delete(String uuid) {
-        Resume resume = new Resume();
-        resume.setUuid(uuid);
+        Resume resume = new Resume(uuid);
 
         final int index = getIndex(resume);
         if (index < 0) {
-            System.out.printf("Resume with id='%s' doesn't exist in DB!%n", resume.getUuid());
-            return;
+            throw new ResumeDoesntExistInStorageException(uuid);
         }
 
         deleteProcessing(index);
