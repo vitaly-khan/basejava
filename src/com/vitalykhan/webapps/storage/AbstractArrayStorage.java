@@ -7,45 +7,84 @@ import com.vitalykhan.webapps.model.Resume;
 
 import java.util.Arrays;
 
-public abstract class AbstractArrayStorage implements Storage {
-    static final int STORAGE_LIMIT = 10000;
+public abstract class AbstractArrayStorage extends AbstractStorage {
+    static final int STORAGE_LIMIT = 100_000;
     Resume[] storage = new Resume[STORAGE_LIMIT];
+
     int size = 0;
 
+
+    /*SAVING*/
     @Override
-    public void clear() {
-        Arrays.fill(storage, 0, size, null);
-        size = 0;
+    void checkSizeWhenSaving(Resume resume) {
+        if (size == STORAGE_LIMIT) {
+            throw new StorageException("Storage overflow", resume.getUuid());
+        }
     }
 
+    @Override
+    Object checkResumeDoesntExistAndGetIndex(Resume resume) {
+        int index = getIndex(resume);
+        if (index >= 0) {
+            throw new ResumeExistsInStorageException(resume.getUuid());
+        }
+        return index;
+    }
+
+    @Override
+    void saveProcessing(Resume resume, Object index) {
+        saveToArrayProcessing(resume, (Integer) index);
+        size++;
+    }
+
+    abstract void saveToArrayProcessing(Resume resume, int index);
+
+
+    /*UPDATING*/
+    @Override
+    Object checkResumeExistsAndGetIndex(Resume r) {
+            final int index = getIndex(r);
+            if (index < 0) {
+                throw new ResumeDoesntExistInStorageException(r.getUuid());
+            }
+            return index;
+    }
+
+    @Override
+    protected void updateProcessing(Object index, Resume resume) {
+        storage[(int) index] = resume;
+    }
+
+
+    /*DELETING*/
+    @Override
+    void deleteProcessing(Object index) {
+        deleteInArrayProcessing((Integer) index);
+        size--;
+        storage[size] = null;
+    }
+
+    abstract void deleteInArrayProcessing(int index);
+
+
+    /*GETTING*/
+    @Override
+    Resume getResume(Object index) {
+        return storage[(Integer) index];
+    }
+
+
+    /*OTHERS*/
     @Override
     public int size() {
         return size;
     }
 
     @Override
-    public final void update(Resume r) {
-        final int index = getIndex(r);
-        if (index < 0) {
-            throw new ResumeDoesntExistInStorageException(r.getUuid());
-        }
-        storage[index] = r;
+    public void clear() {
+        Arrays.fill(storage, 0, size, null);
+        size = 0;
     }
-
-    @Override
-    public void save(Resume r) {
-        if (size == STORAGE_LIMIT) {
-            throw new StorageException("Storage overflow", r.getUuid());
-        }
-
-        if (getIndex(r) >= 0) {
-            throw new ResumeExistsInStorageException(r.getUuid());
-        }
-        saveProcessing(r);
-        size++;
-    }
-
-    abstract void saveProcessing(Resume resume);
 
     /**
      * @return array, contains only Resumes in storage (without null)
@@ -55,32 +94,6 @@ public abstract class AbstractArrayStorage implements Storage {
         return Arrays.copyOf(storage, size);
     }
 
-    @Override
-    public final Resume get(String uuid) {
-        Resume resume = new Resume(uuid);
-
-        final int index = getIndex(resume);
-        if (index < 0) {
-            throw new ResumeDoesntExistInStorageException(uuid);
-        }
-        return storage[index];
-    }
-
-    @Override
-    public final void delete(String uuid) {
-        Resume resume = new Resume(uuid);
-
-        final int index = getIndex(resume);
-        if (index < 0) {
-            throw new ResumeDoesntExistInStorageException(uuid);
-        }
-
-        deleteProcessing(index);
-        size--;
-        storage[size] = null;
-    }
-
-    abstract void deleteProcessing(int index);
 
     /**
      * Searches for given Resume in storage.
@@ -89,7 +102,5 @@ public abstract class AbstractArrayStorage implements Storage {
      * @return index of found resume or -1 if not found
      */
     abstract int getIndex(Resume resume);
-
-
 
 }

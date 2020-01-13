@@ -8,12 +8,12 @@ import com.vitalykhan.webapps.model.Resume;
 public class ArrayStorage extends AbstractArrayStorage {
 
     @Override
-    public void saveProcessing(Resume r) {
-            storage[size] = r;
+    public void saveToArrayProcessing(Resume resume, int index) {
+        storage[size] = resume;
     }
 
     @Override
-    void deleteProcessing(int index) {
+    void deleteInArrayProcessing(int index) {
         storage[index] = storage[size - 1];
     }
 
