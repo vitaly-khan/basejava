@@ -9,7 +9,7 @@ public class MapStorage extends AbstractStorage {
     Map<String, Resume> resumeMap = new HashMap<>();
 
     @Override
-    void checkSizeWhenSaving(Resume resume) {
+    void checkNoStorageOverflow(Resume resume) {
         /*No need to check size in ListStorage*/
     }
 
@@ -19,22 +19,22 @@ public class MapStorage extends AbstractStorage {
     }
 
     @Override
-    void saveProcessing(Resume resume, Object index) {
+    void doSave(Resume resume, Object index) {
 
     }
 
     @Override
-    void updateProcessing(Object index, Resume resume) {
+    void doUpdate(Object index, Resume resume) {
 
     }
 
     @Override
-    void deleteProcessing(Object index) {
+    void doDelete(Object index) {
 
     }
 
     @Override
-    Resume getResume(Object index) {
+    Resume doGet(Object index) {
         return null;
     }
 

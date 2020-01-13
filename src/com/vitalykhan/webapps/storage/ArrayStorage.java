@@ -18,13 +18,12 @@ public class ArrayStorage extends AbstractArrayStorage {
     }
 
     int getIndex(Resume resume) {
-        int result = -1;
         for (int i = 0; i < size; i++) {
             if (storage[i].equals(resume)) {
                 return i;
             }
         }
-        return result;
+        return -1;
     }
 
 }

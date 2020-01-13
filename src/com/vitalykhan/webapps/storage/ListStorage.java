@@ -11,7 +11,7 @@ public class ListStorage extends AbstractStorage {
     private List<Resume> resumeList = new ArrayList<>();
 
     @Override
-    void checkSizeWhenSaving(Resume resume) {
+    void checkNoStorageOverflow(Resume resume) {
         /*No need to check size in ListStorage*/
     }
 
@@ -26,7 +26,7 @@ public class ListStorage extends AbstractStorage {
     }
 
     @Override
-    void saveProcessing(Resume resume, Object index) {
+    void doSave(Resume resume, Object index) {
         resumeList.add(resume); //we don't care about index in ListStorage. New element is added to the end.
     }
 
@@ -42,17 +42,17 @@ public class ListStorage extends AbstractStorage {
     }
 
     @Override
-    protected void updateProcessing(Object index, Resume resume) {
+    protected void doUpdate(Object index, Resume resume) {
         resumeList.set((int) index, resume);
     }
 
     @Override
-    void deleteProcessing(Object index) {
+    void doDelete(Object index) {
         resumeList.remove((int) index);
     }
 
     @Override
-    Resume getResume(Object index) {
+    Resume doGet(Object index) {
         return resumeList.get((int) index);
     }
 

@@ -16,7 +16,7 @@ public abstract class AbstractArrayStorage extends AbstractStorage {
 
     /*SAVING*/
     @Override
-    void checkSizeWhenSaving(Resume resume) {
+    void checkNoStorageOverflow(Resume resume) {
         if (size == STORAGE_LIMIT) {
             throw new StorageException("Storage overflow", resume.getUuid());
         }
@@ -32,7 +32,7 @@ public abstract class AbstractArrayStorage extends AbstractStorage {
     }
 
     @Override
-    void saveProcessing(Resume resume, Object index) {
+    void doSave(Resume resume, Object index) {
         saveToArrayProcessing(resume, (Integer) index);
         size++;
     }
@@ -42,23 +42,23 @@ public abstract class AbstractArrayStorage extends AbstractStorage {
 
     /*UPDATING*/
     @Override
-    Object checkResumeExistsAndGetIndex(Resume r) {
-            final int index = getIndex(r);
+    Object checkResumeExistsAndGetIndex(Resume resume) {
+            final int index = getIndex(resume);
             if (index < 0) {
-                throw new ResumeDoesntExistInStorageException(r.getUuid());
+                throw new ResumeDoesntExistInStorageException(resume.getUuid());
             }
             return index;
     }
 
     @Override
-    protected void updateProcessing(Object index, Resume resume) {
+    protected void doUpdate(Object index, Resume resume) {
         storage[(int) index] = resume;
     }
 
 
     /*DELETING*/
     @Override
-    void deleteProcessing(Object index) {
+    void doDelete(Object index) {
         deleteInArrayProcessing((Integer) index);
         size--;
         storage[size] = null;
@@ -69,7 +69,7 @@ public abstract class AbstractArrayStorage extends AbstractStorage {
 
     /*GETTING*/
     @Override
-    Resume getResume(Object index) {
+    Resume doGet(Object index) {
         return storage[(Integer) index];
     }
 
