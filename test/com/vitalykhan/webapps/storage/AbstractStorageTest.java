@@ -2,18 +2,15 @@ package com.vitalykhan.webapps.storage;
 
 import com.vitalykhan.webapps.exception.ResumeDoesntExistInStorageException;
 import com.vitalykhan.webapps.exception.ResumeExistsInStorageException;
-import com.vitalykhan.webapps.exception.StorageException;
 import com.vitalykhan.webapps.model.Resume;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 
-import java.util.UUID;
-
-public abstract class AbstractArrayStorageTest {
+public abstract class AbstractStorageTest {
     Storage storage;
 
-    public AbstractArrayStorageTest(Storage storage) {
+    public AbstractStorageTest(Storage storage) {
         this.storage = storage;
     }
 
@@ -59,20 +56,10 @@ public abstract class AbstractArrayStorageTest {
         storage.save(new Resume("3"));
     }
 
-    @Test(expected = StorageException.class)
-    public void saveTooMany() {
-        try {
-            for (int i = 3; i < AbstractArrayStorage.STORAGE_LIMIT; i++) {
-                storage.save(new Resume(UUID.randomUUID().toString()));
-            }
-        } catch (Exception e) {
-            Assert.fail();
-        }
-        storage.save(new Resume("last"));
-    }
-
     @Test
-    public abstract void getAll();
+    public void getAll() {
+        Assert.assertTrue(storage.size() == 3);
+    }
 
     @Test
     public void get() {

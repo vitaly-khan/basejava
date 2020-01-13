@@ -1,7 +1,7 @@
 package com.vitalykhan.webapps;
 
 import com.vitalykhan.webapps.model.Resume;
-import com.vitalykhan.webapps.storage.SortedArrayStorage;
+import com.vitalykhan.webapps.storage.MapStorage;
 import com.vitalykhan.webapps.storage.Storage;
 
 import java.io.BufferedReader;
@@ -13,7 +13,7 @@ import java.io.InputStreamReader;
  * (just run, no need to understand)
  */
 public class MainArray {
-    private final static Storage ARRAY_STORAGE = new SortedArrayStorage();
+    private final static Storage ARRAY_STORAGE = new MapStorage();
 
     public static void main(String[] args) throws IOException {
         BufferedReader reader = new BufferedReader(new InputStreamReader(System.in));

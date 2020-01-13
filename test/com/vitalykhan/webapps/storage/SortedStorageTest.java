@@ -3,8 +3,8 @@ package com.vitalykhan.webapps.storage;
 import com.vitalykhan.webapps.model.Resume;
 import org.junit.Assert;
 
-public class SortedArrayStorageTest extends AbstractArrayStorageTest{
-    public SortedArrayStorageTest() {
+public class SortedStorageTest extends AbstractArrayTest {
+    public SortedStorageTest() {
         super(new SortedArrayStorage());
     }
 
@@ -14,5 +14,6 @@ public class SortedArrayStorageTest extends AbstractArrayStorageTest{
         Assert.assertEquals(new Resume("1"), result[0]);
         Assert.assertEquals(new Resume("3"), result[1]);
         Assert.assertEquals(new Resume("5"), result[2]);
+        Assert.assertEquals(3, result.length);
     }
 }

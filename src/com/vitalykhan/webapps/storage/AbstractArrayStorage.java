@@ -8,7 +8,7 @@ import com.vitalykhan.webapps.model.Resume;
 import java.util.Arrays;
 
 public abstract class AbstractArrayStorage extends AbstractStorage {
-    static final int STORAGE_LIMIT = 100_000;
+    static final int STORAGE_LIMIT = 10_000;
     Resume[] storage = new Resume[STORAGE_LIMIT];
 
     int size = 0;
