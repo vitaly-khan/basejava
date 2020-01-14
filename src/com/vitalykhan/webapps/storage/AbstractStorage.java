@@ -2,7 +2,11 @@ package com.vitalykhan.webapps.storage;
 
 import com.vitalykhan.webapps.model.Resume;
 
+import java.util.Comparator;
+
 public abstract class AbstractStorage implements Storage {
+
+    public static final Comparator<Resume> RESUME_COMPARATOR = Comparator.comparing(Resume::getFullName).thenComparing(Resume::getUuid);
 
     @Override
     public void save(Resume resume) {
@@ -41,7 +45,7 @@ public abstract class AbstractStorage implements Storage {
 
     @Override
     public final Resume get(String uuid) {
-        Resume resume = new Resume(uuid);
+        Resume resume = new Resume(uuid, "");
         final Object index = checkResumeExistsAndGetIndex(resume);
         return doGet(index);
     }

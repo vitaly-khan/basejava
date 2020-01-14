@@ -7,6 +7,8 @@ import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 
+import java.util.List;
+
 public abstract class AbstractStorageTest {
     Storage storage;
 
@@ -17,9 +19,9 @@ public abstract class AbstractStorageTest {
     @Before
     public void beforeMethod() {
         storage.clear();
-        storage.save(new Resume("1"));
-        storage.save(new Resume("5"));
-        storage.save(new Resume("3"));
+        storage.save(new Resume("1", "Vitaly"));
+        storage.save(new Resume("2", "Regina"));
+        storage.save(new Resume("3", "Timur"));
     }
 
     @Test
@@ -35,7 +37,7 @@ public abstract class AbstractStorageTest {
 
     @Test
     public void update() {
-        storage.update(new Resume("3"));
+        storage.update(new Resume("1","Regina"));
         Assert.assertEquals(3, storage.size());
     }
 
@@ -46,26 +48,30 @@ public abstract class AbstractStorageTest {
 
     @Test
     public void save() {
-        storage.save(new Resume("7"));
+        storage.save(new Resume("7", "Natasha"));
         Assert.assertEquals(4, storage.size());
         storage.get("7");
     }
 
     @Test(expected = ResumeExistsInStorageException.class)
     public void saveExists() {
-        storage.save(new Resume("3"));
+        storage.save(new Resume("3", "dummy"));
     }
 
     @Test
-    public void getAll() {
-        Assert.assertTrue(storage.size() == 3);
+    public void getAllSorted() {
+        Assert.assertEquals(3, storage.size());
+        List<Resume> resumeList = storage.getAllSorted();
+        Assert.assertEquals("Regina", resumeList.get(0).getFullName());
+        Assert.assertEquals("Timur", resumeList.get(1).getFullName());
+        Assert.assertEquals("Vitaly", resumeList.get(2).getFullName());
     }
 
     @Test
     public void get() {
-        Assert.assertEquals(new Resume("1"), storage.get("1"));
-        Assert.assertEquals(new Resume("3"), storage.get("3"));
-        Assert.assertEquals(new Resume("5"), storage.get("5"));
+        Assert.assertEquals("Vitaly", storage.get("1").getFullName());
+        Assert.assertEquals("Regina", storage.get("2").getFullName());
+        Assert.assertEquals("Timur", storage.get("3").getFullName());
     }
 
 
