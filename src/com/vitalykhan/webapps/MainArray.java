@@ -1,7 +1,7 @@
 package com.vitalykhan.webapps;
 
 import com.vitalykhan.webapps.model.Resume;
-import com.vitalykhan.webapps.storage.MapUuidStorage;
+import com.vitalykhan.webapps.storage.SortedArrayStorage;
 import com.vitalykhan.webapps.storage.Storage;
 
 import java.io.BufferedReader;
@@ -13,7 +13,7 @@ import java.io.InputStreamReader;
  * (just run, no need to understand)
  */
 public class MainArray {
-    private final static Storage ARRAY_STORAGE = new MapUuidStorage();
+    private final static Storage storage = new SortedArrayStorage();
 
     public static void main(String[] args) throws IOException {
         BufferedReader reader = new BufferedReader(new InputStreamReader(System.in));
@@ -34,27 +34,27 @@ public class MainArray {
                     printAll();
                     break;
                 case "size":
-                    System.out.println(ARRAY_STORAGE.size());
+                    System.out.println(storage.size());
                     break;
                 case "save":
                     r = new Resume(param);
-                    ARRAY_STORAGE.save(r);
+                    storage.save(r);
                     printAll();
                     break;
                 case "update":
                     r = new Resume(param, params[2]);
-                    ARRAY_STORAGE.update(r);
+                    storage.update(r);
                     printAll();
                     break;
                 case "delete":
-                    ARRAY_STORAGE.delete(param);
+                    storage.delete(param);
                     printAll();
                     break;
                 case "get":
-                    System.out.println(ARRAY_STORAGE.get(param));
+                    System.out.println(storage.get(param));
                     break;
                 case "clear":
-                    ARRAY_STORAGE.clear();
+                    storage.clear();
                     printAll();
                     break;
                 case "exit":
@@ -67,7 +67,7 @@ public class MainArray {
     }
 
     static void printAll() {
-        Resume[] all = ARRAY_STORAGE.getAllSorted().toArray(new Resume[0]);
+        Resume[] all = storage.getAllSorted().toArray(new Resume[0]);
         System.out.println("----------------------------");
         if (all.length == 0) {
             System.out.println("Empty");

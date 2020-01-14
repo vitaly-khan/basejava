@@ -55,7 +55,7 @@ public abstract class AbstractStorageTest {
 
     @Test(expected = ResumeExistsInStorageException.class)
     public void saveExists() {
-        storage.save(new Resume("3", "dummy"));
+        storage.save(new Resume("3", "Timur"));
     }
 
     @Test
@@ -82,7 +82,12 @@ public abstract class AbstractStorageTest {
 
     @Test(expected = ResumeDoesntExistInStorageException.class)
     public void delete() {
-        storage.delete("1");
+
+        try {
+            storage.delete("1");
+        } catch (Exception e) {
+            Assert.fail();
+        }
         Assert.assertEquals(2, storage.size());
         storage.get("1");
     }

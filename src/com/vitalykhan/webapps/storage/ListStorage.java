@@ -1,7 +1,5 @@
 package com.vitalykhan.webapps.storage;
 
-import com.vitalykhan.webapps.exception.ResumeDoesntExistInStorageException;
-import com.vitalykhan.webapps.exception.ResumeExistsInStorageException;
 import com.vitalykhan.webapps.model.Resume;
 
 import java.util.ArrayList;
@@ -16,29 +14,23 @@ public class ListStorage extends AbstractStorage {
     }
 
     @Override
-    Object checkResumeDoesntExistAndGetIndex(Resume resume) {
-        for (Resume r : resumeList) {
-            if (r.getUuid().equals(resume.getUuid())) {
-                throw new ResumeExistsInStorageException(resume.getUuid());
+    boolean exists(Object index) {
+        return index != null;
+    }
+
+    @Override
+    Object getIndex(String uuid) {
+        for (int i = 0; i < resumeList.size(); i++) {
+            if (resumeList.get(i).getUuid().equals(uuid)) {
+                return i;
             }
         }
-        return null; //we can return null or anything else here... it doesn't affect program.
+        return null;
     }
 
     @Override
     void doSave(Resume resume, Object index) {
         resumeList.add(resume); //we don't care about index in ListStorage. New element is added to the end.
-    }
-
-
-    @Override
-    Object checkResumeExistsAndGetIndex(Resume resume) {
-        for (int i = 0; i < resumeList.size(); i++) {
-            if (resumeList.get(i).getUuid().equals(resume.getUuid())) {
-                return i;
-            }
-        }
-        throw new ResumeDoesntExistInStorageException(resume.getUuid());
     }
 
     @Override
@@ -68,8 +60,7 @@ public class ListStorage extends AbstractStorage {
     }
 
     @Override
-    public List<Resume> getAllSorted() {
-        resumeList.sort(RESUME_COMPARATOR);
-        return resumeList;
+    List<Resume> doGetAll() {
+        return new ArrayList<>(resumeList);
     }
 }

@@ -1,7 +1,5 @@
 package com.vitalykhan.webapps.storage;
 
-import com.vitalykhan.webapps.exception.ResumeDoesntExistInStorageException;
-import com.vitalykhan.webapps.exception.ResumeExistsInStorageException;
 import com.vitalykhan.webapps.exception.StorageException;
 import com.vitalykhan.webapps.model.Resume;
 
@@ -15,22 +13,12 @@ public abstract class AbstractArrayStorage extends AbstractStorage {
 
     int size = 0;
 
-
     /*SAVING*/
     @Override
     void checkNoStorageOverflow(Resume resume) {
         if (size == STORAGE_LIMIT) {
             throw new StorageException("Storage overflow", resume.getUuid());
         }
-    }
-
-    @Override
-    Object checkResumeDoesntExistAndGetIndex(Resume resume) {
-        int index = getIndex(resume);
-        if (index >= 0) {
-            throw new ResumeExistsInStorageException(resume.getUuid());
-        }
-        return index;
     }
 
     @Override
@@ -42,23 +30,12 @@ public abstract class AbstractArrayStorage extends AbstractStorage {
     abstract void saveToArrayProcessing(Resume resume, int index);
 
 
-    /*UPDATING*/
-    @Override
-    Object checkResumeExistsAndGetIndex(Resume resume) {
-            final int index = getIndex(resume);
-            if (index < 0) {
-                throw new ResumeDoesntExistInStorageException(resume.getUuid());
-            }
-            return index;
-    }
-
     @Override
     protected void doUpdate(Object index, Resume resume) {
         storage[(int) index] = resume;
     }
 
 
-    /*DELETING*/
     @Override
     void doDelete(Object index) {
         deleteInArrayProcessing((Integer) index);
@@ -68,15 +45,16 @@ public abstract class AbstractArrayStorage extends AbstractStorage {
 
     abstract void deleteInArrayProcessing(int index);
 
+    @Override
+    boolean exists(Object index) {
+        return (Integer) index >= 0;
+    }
 
-    /*GETTING*/
     @Override
     Resume doGet(Object index) {
         return storage[(Integer) index];
     }
 
-
-    /*OTHERS*/
     @Override
     public int size() {
         return size;
@@ -88,23 +66,8 @@ public abstract class AbstractArrayStorage extends AbstractStorage {
         size = 0;
     }
 
-    /**
-     * @return array, contains only Resumes in storage (without null)
-     */
     @Override
-    public List<Resume> getAllSorted() {
-        List<Resume> result = new ArrayList<>(Arrays.asList(Arrays.copyOf(storage, size)));
-        result.sort(RESUME_COMPARATOR);
-        return result;
+    List<Resume> doGetAll() {
+        return new ArrayList<>(Arrays.asList(Arrays.copyOf(storage, size)));
     }
-
-
-    /**
-     * Searches for given Resume in storage.
-     *
-     * @param resume given resume
-     * @return index of found resume or -1 if not found
-     */
-    abstract int getIndex(Resume resume);
-
 }

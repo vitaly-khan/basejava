@@ -3,8 +3,13 @@ package com.vitalykhan.webapps.storage;
 import com.vitalykhan.webapps.model.Resume;
 
 import java.util.Arrays;
+import java.util.Comparator;
 
 public class SortedArrayStorage extends AbstractArrayStorage {
+
+    public static final Comparator<Resume> RESUME_COMPARATOR_BY_UUID =
+            Comparator.comparing(Resume::getUuid);
+
 
     @Override
     public void saveToArrayProcessing(Resume r, int index) {
@@ -21,7 +26,9 @@ public class SortedArrayStorage extends AbstractArrayStorage {
 
 
     @Override
-    int getIndex(Resume resume) {
-        return Arrays.binarySearch(storage, 0, size, resume);
+    Integer getIndex(String uuid) {
+        Resume searchKey = new Resume(uuid, "dummy");
+        return Arrays.binarySearch(storage, 0, size, searchKey,
+                RESUME_COMPARATOR_BY_UUID);
     }
 }

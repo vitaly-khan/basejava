@@ -1,7 +1,5 @@
 package com.vitalykhan.webapps.storage;
 
-import com.vitalykhan.webapps.exception.ResumeDoesntExistInStorageException;
-import com.vitalykhan.webapps.exception.ResumeExistsInStorageException;
 import com.vitalykhan.webapps.model.Resume;
 
 import java.util.ArrayList;
@@ -10,27 +8,21 @@ import java.util.List;
 import java.util.Map;
 
 public class MapUuidStorage extends AbstractStorage {
-    Map<String, Resume> resumeMap = new HashMap<>();
+    private Map<String, Resume> resumeMap = new HashMap<>();
 
     @Override
     void checkNoStorageOverflow(Resume resume) {
-        /*No need to check size in ListStorage*/
+        /*No need to check size in MapStorage*/
     }
 
     @Override
-    Object checkResumeDoesntExistAndGetIndex(Resume resume) {
-        if (resumeMap.containsKey(resume.getUuid())) {
-            throw new ResumeExistsInStorageException(resume.getUuid());
-        }
-        return resume.getUuid();
+    boolean exists(Object index) {
+        return resumeMap.containsKey(index);
     }
 
     @Override
-    Object checkResumeExistsAndGetIndex(Resume resume) {
-        if (!resumeMap.containsKey(resume.getUuid())) {
-            throw new ResumeDoesntExistInStorageException(resume.getUuid());
-        }
-        return resume.getUuid();
+    Object getIndex(String uuid) {
+        return uuid;
     }
 
     @Override
@@ -59,10 +51,8 @@ public class MapUuidStorage extends AbstractStorage {
     }
 
     @Override
-    public List<Resume> getAllSorted() {
-        List<Resume> result = new ArrayList<>(resumeMap.values());
-        result.sort(RESUME_COMPARATOR);
-        return result;
+    List<Resume> doGetAll() {
+        return new ArrayList<>(resumeMap.values());
     }
 
     @Override
