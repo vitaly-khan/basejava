@@ -5,7 +5,7 @@ import com.vitalykhan.webapps.model.Resume;
 import java.util.ArrayList;
 import java.util.List;
 
-public class ListStorage extends AbstractStorage {
+public class ListStorage extends AbstractStorage<Integer> {
     private List<Resume> resumeList = new ArrayList<>();
 
     @Override
@@ -14,12 +14,12 @@ public class ListStorage extends AbstractStorage {
     }
 
     @Override
-    boolean exists(Object index) {
+    boolean exists(Integer index) {
         return index != null;
     }
 
     @Override
-    Object getIndex(String uuid) {
+    Integer getIndex(String uuid) {
         for (int i = 0; i < resumeList.size(); i++) {
             if (resumeList.get(i).getUuid().equals(uuid)) {
                 return i;
@@ -29,23 +29,23 @@ public class ListStorage extends AbstractStorage {
     }
 
     @Override
-    void doSave(Resume resume, Object index) {
+    void doSave(Resume resume, Integer index) {
         resumeList.add(resume); //we don't care about index in ListStorage. New element is added to the end.
     }
 
     @Override
-    protected void doUpdate(Object index, Resume resume) {
-        resumeList.set((int) index, resume);
+    protected void doUpdate(Integer index, Resume resume) {
+        resumeList.set(index, resume);
     }
 
     @Override
-    void doDelete(Object index) {
+    void doDelete(Integer index) {
         resumeList.remove((int) index);
     }
 
     @Override
-    Resume doGet(Object index) {
-        return resumeList.get((int) index);
+    Resume doGet(Integer index) {
+        return resumeList.get(index);
     }
 
 

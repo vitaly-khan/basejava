@@ -7,7 +7,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-public abstract class AbstractArrayStorage extends AbstractStorage {
+public abstract class AbstractArrayStorage extends AbstractStorage<Integer> {
     static final int STORAGE_LIMIT = 10_000;
     Resume[] storage = new Resume[STORAGE_LIMIT];
 
@@ -22,8 +22,8 @@ public abstract class AbstractArrayStorage extends AbstractStorage {
     }
 
     @Override
-    void doSave(Resume resume, Object index) {
-        saveToArrayProcessing(resume, (Integer) index);
+    void doSave(Resume resume, Integer index) {
+        saveToArrayProcessing(resume, index);
         size++;
     }
 
@@ -31,14 +31,14 @@ public abstract class AbstractArrayStorage extends AbstractStorage {
 
 
     @Override
-    protected void doUpdate(Object index, Resume resume) {
-        storage[(int) index] = resume;
+    protected void doUpdate(Integer index, Resume resume) {
+        storage[index] = resume;
     }
 
 
     @Override
-    void doDelete(Object index) {
-        deleteInArrayProcessing((Integer) index);
+    void doDelete(Integer index) {
+        deleteInArrayProcessing(index);
         size--;
         storage[size] = null;
     }
@@ -46,13 +46,13 @@ public abstract class AbstractArrayStorage extends AbstractStorage {
     abstract void deleteInArrayProcessing(int index);
 
     @Override
-    boolean exists(Object index) {
-        return (Integer) index >= 0;
+    boolean exists(Integer index) {
+        return index >= 0;
     }
 
     @Override
-    Resume doGet(Object index) {
-        return storage[(Integer) index];
+    Resume doGet(Integer index) {
+        return storage[index];
     }
 
     @Override

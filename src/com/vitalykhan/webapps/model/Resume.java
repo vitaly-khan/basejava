@@ -1,7 +1,6 @@
 package com.vitalykhan.webapps.model;
 
-import java.util.Objects;
-import java.util.UUID;
+import java.util.*;
 
 /**
  * Initial resume class
@@ -13,6 +12,9 @@ public class Resume implements Comparable<Resume>{
 
     private String fullName;
 
+    private final Map<ContactType, String> contactsMap = new EnumMap<>(ContactType.class);
+    private final Map<SectionType, Section> sectionsMap = new EnumMap<>(SectionType.class);
+
     public Resume(String fullName) {
         this(UUID.randomUUID().toString(), fullName);
     }
@@ -23,6 +25,21 @@ public class Resume implements Comparable<Resume>{
         this.uuid = uuid;
         this.fullName = fullName;
     }
+    public String getContact(ContactType type) {
+        return contactsMap.get(type);
+    }
+
+    public Section getSection(SectionType type) {
+        return sectionsMap.get(type);
+    }
+
+    public Map<ContactType, String> getContactsMap() {
+        return contactsMap;
+    }
+
+    public Map<SectionType, Section> getSectionsMap() {
+        return sectionsMap;
+    }
 
     public String getUuid() {
         return uuid;
@@ -30,10 +47,6 @@ public class Resume implements Comparable<Resume>{
 
     public String getFullName() {
         return fullName;
-    }
-
-    public void setFullName(String fullName) {
-        this.fullName = fullName;
     }
 
     @Override
