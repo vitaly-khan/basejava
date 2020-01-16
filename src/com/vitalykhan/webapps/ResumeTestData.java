@@ -4,6 +4,7 @@ import com.vitalykhan.webapps.model.*;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 
@@ -20,10 +21,16 @@ public class ResumeTestData {
                 "Taxi", "taxi-2000.com", LocalDate.of(2012, 01, 01),
                 LocalDate.of(2020, 01, 01), "Управляющий",
                 "Выполнял широкий спектр обязанностей: и менеджера, и программиста, и HR");
+        List<Position> positions = new ArrayList<>(Arrays.asList(
+                new Position(LocalDate.of(2008, 01, 01),
+                        LocalDate.of(2012, 01, 01), "Ассистент кафедры",
+                        "Преподавал информатику, в т.ч. основы программирования"),
+                new Position(LocalDate.of(2006, 01, 01),
+                        LocalDate.of(2008, 01, 01), "Ведущий программист",
+                        "В оснном занимался системным администрированием")));
+
         Organization firstOrganization = new Organization(
-                "НИ РХТУ им. Д.И.Менделеева", null, LocalDate.of(2006, 01, 01),
-                LocalDate.of(2012, 01, 01), "Ассистент кафедры",
-                "Преподавал информатику, в т.ч. основы программирования");
+                "НИ РХТУ им. Д.И.Менделеева", null, positions);
         organizationList.add(lastOrganization);
         organizationList.add(firstOrganization);
         Section experience = new OrganizationSection(organizationList);
