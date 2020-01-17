@@ -33,12 +33,12 @@ public class Resume implements Comparable<Resume>{
         return sectionsMap.get(type);
     }
 
-    public Map<ContactType, String> getContactsMap() {
-        return contactsMap;
+    public void addContact(ContactType type, String string) {
+        contactsMap.put(type, string);
     }
 
-    public Map<SectionType, Section> getSectionsMap() {
-        return sectionsMap;
+    public void addSection(SectionType type, Section section) {
+        sectionsMap.put(type, section);
     }
 
     public String getUuid() {

@@ -33,37 +33,50 @@ public abstract class AbstractFileStorage extends AbstractStorage<File> {
     void doSave(Resume resume, File index) {
         try {
             index.createNewFile();
-            doWrite(resume, index);
         } catch (IOException e) {
-            throw new StorageException("IO Exception", resume.getUuid(), e);
+            throw new StorageException("Couldn't create file " + index.getAbsolutePath(), resume.getUuid(), e);
         }
+        doUpdate(index, resume);
+
     }
 
-    abstract void doWrite(Resume resume, File index);
+    abstract Resume doRead(File index) throws IOException;
+
+    abstract void doWrite(Resume resume, File index) throws IOException;
 
     @Override
     void doUpdate(File index, Resume resume) {
+        try {
             doWrite(resume, index);
+        } catch (IOException e) {
+            throw new StorageException("File write error", resume.getUuid(), e);
+        }
     }
 
     @Override
     void doDelete(File index) {
-        index.delete();
+        if (!index.delete()) {
+            throw new StorageException("File delete error", index.getName());
+        }
+        ;
     }
 
     @Override
     Resume doGet(File index) {
 
-        return doRead(index);
+        try {
+            return doRead(index);
+        } catch (IOException e) {
+            throw new StorageException("File read error", index.getName(), e);
+        }
     }
 
-    abstract Resume doRead(File index);
 
     @Override
     List<Resume> doGetAll() {
         List<Resume> result = new ArrayList<>();
         for (File file : checkFileExistsAndGetFiles()) {
-            result.add(doRead(file));
+            result.add(doGet(file));
         }
 
         return result;
@@ -82,7 +95,7 @@ public abstract class AbstractFileStorage extends AbstractStorage<File> {
     @Override
     public void clear() {
         for (File file : checkFileExistsAndGetFiles()) {
-            file.delete();
+            doDelete(file);
         }
     }
 
@@ -94,7 +107,7 @@ public abstract class AbstractFileStorage extends AbstractStorage<File> {
     private File[] checkFileExistsAndGetFiles() {
         File[] files = directory.listFiles();
         if (files == null) {
-            throw new StorageException("IO Exception", "no uuid");
+            throw new StorageException("Directory read error", null);
         }
         return files;
     }

@@ -1,5 +1,6 @@
 package com.vitalykhan.webapps.model;
 
+import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
 
@@ -9,6 +10,10 @@ public class OrganizationSection extends Section {
     public OrganizationSection(List<Organization> organizationList) {
         Objects.requireNonNull(organizationList, "Organizations mustn't be null");
         this.organizationList = organizationList;
+    }
+
+    public OrganizationSection(Organization... organizations) {
+        this(Arrays.asList(organizations));
     }
 
     public List<Organization> getOrganizationList() {

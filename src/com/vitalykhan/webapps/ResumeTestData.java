@@ -1,47 +1,62 @@
 package com.vitalykhan.webapps;
 
 import com.vitalykhan.webapps.model.*;
+import com.vitalykhan.webapps.utils.DateUtil;
 
-import java.time.LocalDate;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Map;
+import java.time.Month;
 
 public class ResumeTestData {
-    public static void main(String[] args) {
-        Resume resume = new Resume("1", "Vitaly Khan");
+    public static final Resume R1;
+    public static final Resume R2;
+    public static final Resume R3;
+    public static final String UUID1 = "1";
+    public static final String UUID2 = "2";
+    public static final String UUID3 = "3";
 
-        String phone = "+7-910-1234567";
+    static {
+        R1 = new Resume(UUID1, "Vitaly Khan");
 
-        Section achievements = new StringSection("a@b.ru");
+        R1.addContact(ContactType.PHONE_NUMBER, "+7-910-1234567");
+        R1.addContact(ContactType.GITHUB, "http://www.github.com/vitaly-khan");
+        R1.addContact(ContactType.EMAIL, "a@b.ru");
 
-        List<Organization> organizationList = new ArrayList<>();
-        Organization lastOrganization = new Organization(
-                "Taxi", "taxi-2000.com", LocalDate.of(2012, 01, 01),
-                LocalDate.of(2020, 01, 01), "Управляющий",
-                "Выполнял широкий спектр обязанностей: и менеджера, и программиста, и HR");
-        List<Position> positions = new ArrayList<>(Arrays.asList(
-                new Position(LocalDate.of(2008, 01, 01),
-                        LocalDate.of(2012, 01, 01), "Ассистент кафедры",
-                        "Преподавал информатику, в т.ч. основы программирования"),
-                new Position(LocalDate.of(2006, 01, 01),
-                        LocalDate.of(2008, 01, 01), "Ведущий программист",
-                        "В оснном занимался системным администрированием")));
+        R1.addSection(SectionType.PERSONAL, new StringSection(
+                "хорошо развитое математическое (логическое) мышление, грамотность, рассудительность, порядочность"));
+        R1.addSection(SectionType.ACHIEVEMENT, new ListSection(
+                "Achievement1", "Achievement2", "Achievement3"));
 
-        Organization firstOrganization = new Organization(
-                "НИ РХТУ им. Д.И.Менделеева", null, positions);
-        organizationList.add(lastOrganization);
-        organizationList.add(firstOrganization);
-        Section experience = new OrganizationSection(organizationList);
+        R1.addSection(SectionType.EDUCATION, new OrganizationSection(
+                new Organization(
+                        "НИ РХТУ им.Д.И.Мендеелеева", null,
+                        DateUtil.of(2001, Month.SEPTEMBER),
+                        DateUtil.of(2006, Month.MAY),
+                        "Дневное обучение, Автоматизированные системы ОИУ",
+                        "")
+        ));
+        R1.addSection(SectionType.QUALIFICATIONS, new ListSection("Java Core", "HTML, SQL", "JDBC, Spring, Hibernate"));
+        R1.addSection(SectionType.EXPERIENCE, new OrganizationSection(
+                new Organization(
+                        "НИ РХТУ им.Д.И.Менделеева", null,
+                        new Organization.Position(
+                                DateUtil.of(2006, Month.MAY),
+                                DateUtil.of(2008, Month.SEPTEMBER),
+                                "Ведущий программист",
+                                "В основном занимался системным администрированием"
+                        ),
+                        new Organization.Position(
+                                DateUtil.of(2008, Month.SEPTEMBER),
+                                DateUtil.of(20010, Month.MAY),
 
-        Map<ContactType, String> contactsMap = resume.getContactsMap();
-        Map<SectionType, Section> sectionsMap = resume.getSectionsMap();
-        contactsMap.put(ContactType.PHONE_NUMBER, phone);
-        sectionsMap.put(SectionType.ACHIEVEMENT, achievements);
-        sectionsMap.put(SectionType.EXPERIENCE, experience);
-        System.out.println(resume);
-
-
+                                "Ассистент кафедры",
+                                "Преподавал информатику, в т.ч. основы программирования"
+                                )
+                ),
+                new Organization("ИП Храпов (Служба такси)", "", new Organization.Position(
+                        DateUtil.of(2010, Month.MAY),
+                        "управляющий",
+                        "Выполнял широкий спектр обязанностей: и менеджера, и программиста, и HR"))
+        ));
+        R2 = new Resume(UUID2, "Regina");
+        R3 = new Resume(UUID3, "Timur");
     }
 }

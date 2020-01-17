@@ -1,5 +1,6 @@
 package com.vitalykhan.webapps.storage;
 
+import com.vitalykhan.webapps.ResumeTestData;
 import com.vitalykhan.webapps.exception.ResumeDoesntExistInStorageException;
 import com.vitalykhan.webapps.exception.ResumeExistsInStorageException;
 import com.vitalykhan.webapps.model.Resume;
@@ -12,6 +13,8 @@ import java.util.List;
 public abstract class AbstractStorageTest {
     Storage storage;
 
+    {}
+
     public AbstractStorageTest(Storage storage) {
         this.storage = storage;
     }
@@ -19,9 +22,9 @@ public abstract class AbstractStorageTest {
     @Before
     public void beforeMethod() {
         storage.clear();
-        storage.save(new Resume("1", "Vitaly"));
-        storage.save(new Resume("2", "Regina"));
-        storage.save(new Resume("3", "Timur"));
+        storage.save(ResumeTestData.R1);
+        storage.save(ResumeTestData.R2);
+        storage.save(ResumeTestData.R3);
     }
 
     @Test
@@ -55,7 +58,7 @@ public abstract class AbstractStorageTest {
 
     @Test(expected = ResumeExistsInStorageException.class)
     public void saveExists() {
-        storage.save(new Resume("3", "Timur"));
+        storage.save(new Resume(ResumeTestData.UUID3, ResumeTestData.UUID3));
     }
 
     @Test
@@ -64,12 +67,12 @@ public abstract class AbstractStorageTest {
         List<Resume> resumeList = storage.getAllSorted();
         Assert.assertEquals("Regina", resumeList.get(0).getFullName());
         Assert.assertEquals("Timur", resumeList.get(1).getFullName());
-        Assert.assertEquals("Vitaly", resumeList.get(2).getFullName());
+        Assert.assertEquals("Vitaly Khan", resumeList.get(2).getFullName());
     }
 
     @Test
     public void get() {
-        Assert.assertEquals("Vitaly", storage.get("1").getFullName());
+        Assert.assertEquals("Vitaly Khan", storage.get("1").getFullName());
         Assert.assertEquals("Regina", storage.get("2").getFullName());
         Assert.assertEquals("Timur", storage.get("3").getFullName());
     }

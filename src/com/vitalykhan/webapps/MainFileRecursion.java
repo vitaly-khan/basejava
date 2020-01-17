@@ -24,6 +24,8 @@ public class MainFileRecursion {
 
         workingDirFiles = getAllFiles(".");
         System.out.println(workingDirFiles.size());
+        printAllFiles(".\\src", 0);
+
     }
 
     private static List<File> getAllFiles(String path) {
@@ -38,5 +40,33 @@ public class MainFileRecursion {
             }
         }
         return result;
+    }
+
+    private static void printAllFiles(String path, int spaces) {
+        File file = new File(path);
+        ArrayList<File> directories = new ArrayList<>();
+        ArrayList<File> files = new ArrayList<>();
+        shift(spaces);
+        String[] subdirs = path.split("\\\\");
+        System.out.println(subdirs[subdirs.length - 1].toUpperCase());
+
+        for (File f : file.listFiles()) {
+            if (f.isDirectory()) {
+                directories.add(f);
+            } else {
+                files.add(f);
+            }
+        }
+        directories.forEach(x -> printAllFiles(x.toString(), spaces + 3));
+        for (File f : files) {
+            shift(spaces + 3);
+            System.out.println(f.getName());
+        }
+    }
+
+    private static void shift(int spaces) {
+        for (int i = 0; i < spaces; i++) {
+            System.out.print(" ");
+        }
     }
 }
