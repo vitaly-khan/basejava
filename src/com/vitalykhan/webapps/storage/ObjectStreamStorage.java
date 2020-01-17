@@ -5,9 +5,9 @@ import com.vitalykhan.webapps.model.Resume;
 
 import java.io.*;
 
-public class ObjectStreamStorage extends AbstractFileStorage {
+public class ObjectStreamStorage extends AbstractPathStorage {
     protected ObjectStreamStorage(File directory) {
-        super(directory);
+        super(directory.toString());
     }
 
     @Override
@@ -18,7 +18,8 @@ public class ObjectStreamStorage extends AbstractFileStorage {
         } catch (ClassNotFoundException e) {
             throw new StorageException("Class Resume not found", "", e);
         }
-        return resume;
+        return resume
+                ;
     }
 
     @Override
