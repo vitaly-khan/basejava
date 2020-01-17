@@ -3,8 +3,7 @@ package com.vitalykhan.webapps.storage;
 import com.vitalykhan.webapps.exception.StorageException;
 import com.vitalykhan.webapps.model.Resume;
 
-import java.io.File;
-import java.io.IOException;
+import java.io.*;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
@@ -12,6 +11,8 @@ import java.util.Objects;
 public abstract class AbstractFileStorage extends AbstractStorage<File> {
 
     private File directory;
+
+
 
     protected AbstractFileStorage(File directory) {
         Objects.requireNonNull(directory, "directory mustn't be null");
@@ -40,14 +41,14 @@ public abstract class AbstractFileStorage extends AbstractStorage<File> {
 
     }
 
-    abstract Resume doRead(File index) throws IOException;
+    abstract Resume doRead(InputStream is) throws IOException;
 
-    abstract void doWrite(Resume resume, File index) throws IOException;
+    abstract void doWrite(Resume resume, OutputStream index) throws IOException;
 
     @Override
     void doUpdate(File index, Resume resume) {
         try {
-            doWrite(resume, index);
+            doWrite(resume, new BufferedOutputStream(new FileOutputStream(index)));
         } catch (IOException e) {
             throw new StorageException("File write error", resume.getUuid(), e);
         }
@@ -65,7 +66,7 @@ public abstract class AbstractFileStorage extends AbstractStorage<File> {
     Resume doGet(File index) {
 
         try {
-            return doRead(index);
+            return doRead(new BufferedInputStream(new FileInputStream(index)));
         } catch (IOException e) {
             throw new StorageException("File read error", index.getName(), e);
         }

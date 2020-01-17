@@ -8,12 +8,12 @@ import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 
+import java.io.File;
 import java.util.List;
 
 public abstract class AbstractStorageTest {
+    protected static final File WORKING_DIR = new File("c:/Java/Project/basejava/storage");
     Storage storage;
-
-    {}
 
     public AbstractStorageTest(Storage storage) {
         this.storage = storage;
@@ -40,7 +40,9 @@ public abstract class AbstractStorageTest {
 
     @Test
     public void update() {
-        storage.update(new Resume("1","Regina"));
+        Resume newResume = new Resume(ResumeTestData.UUID2, "Updated Regina");
+        storage.update(newResume);
+        Assert.assertEquals(newResume, storage.get(ResumeTestData.UUID2));
         Assert.assertEquals(3, storage.size());
     }
 
