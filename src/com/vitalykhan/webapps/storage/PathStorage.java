@@ -2,6 +2,7 @@ package com.vitalykhan.webapps.storage;
 
 import com.vitalykhan.webapps.exception.StorageException;
 import com.vitalykhan.webapps.model.Resume;
+import com.vitalykhan.webapps.storage.serializer.StreamSerializer;
 
 import java.io.*;
 import java.nio.file.Files;
@@ -12,13 +13,16 @@ import java.util.Objects;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-public abstract class AbstractPathStorage extends AbstractStorage<Path> {
+public class PathStorage extends AbstractStorage<Path> {
 
     private Path directory;
+    private StreamSerializer streamSerializer;
 
-    protected AbstractPathStorage(String dir) {
+    protected PathStorage(StreamSerializer streamSerializer, String dir) {
+        Objects.requireNonNull(dir, "directory mustn't be null");
         this.directory = Paths.get(dir);
-        Objects.requireNonNull(directory, "directory mustn't be null");
+
+        this.streamSerializer = streamSerializer;
         if (!Files.isDirectory(directory) || !Files.isWritable(directory)) {
             throw new IllegalArgumentException(Paths.get(dir) + " is not directory or is not writable");
         }
@@ -40,14 +44,10 @@ public abstract class AbstractPathStorage extends AbstractStorage<Path> {
 
     }
 
-    abstract Resume doRead(InputStream is) throws IOException;
-
-    abstract void doWrite(Resume resume, OutputStream index) throws IOException;
-
     @Override
     void doUpdate(Path index, Resume resume) {
         try {
-            doWrite(resume, new BufferedOutputStream(Files.newOutputStream(index)));
+            streamSerializer.doWrite(resume, new BufferedOutputStream(Files.newOutputStream(index)));
         } catch (IOException e) {
             throw new StorageException("File write error", resume.getUuid(), e);
         }
@@ -65,7 +65,7 @@ public abstract class AbstractPathStorage extends AbstractStorage<Path> {
     @Override
     Resume doGet(Path index) {
         try {
-            return doRead(new BufferedInputStream(Files.newInputStream(index)));
+            return streamSerializer.doRead(new BufferedInputStream(Files.newInputStream(index)));
         } catch (IOException e) {
             throw new StorageException("File read error", index.toString(), e);
         }
