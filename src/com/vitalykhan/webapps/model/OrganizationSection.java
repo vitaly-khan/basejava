@@ -5,7 +5,10 @@ import java.util.List;
 import java.util.Objects;
 
 public class OrganizationSection extends Section {
-    private final List<Organization> organizationList;
+    private List<Organization> organizationList;
+
+    public OrganizationSection() {
+    }
 
     public OrganizationSection(List<Organization> organizationList) {
         Objects.requireNonNull(organizationList, "Organizations mustn't be null");

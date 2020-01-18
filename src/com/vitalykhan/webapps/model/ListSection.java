@@ -5,7 +5,10 @@ import java.util.List;
 import java.util.Objects;
 
 public class ListSection extends Section {
-    private final List<String> items; //is it ok to be final?
+    private List<String> items; //is it ok to be final?
+
+    public ListSection() {
+    }
 
     public ListSection(List<String> items) {
         Objects.requireNonNull(items, "items mustn't be null");

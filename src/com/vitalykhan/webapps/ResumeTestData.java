@@ -14,7 +14,7 @@ public class ResumeTestData {
     public static final String UUID3 = "3";
 
     static {
-        R1 = new Resume(UUID1, "Vitaly Khan");
+        R1 = new Resume(UUID1, "Name 1");
 
         R1.addContact(ContactType.PHONE_NUMBER, "+7-910-1234567");
         R1.addContact(ContactType.GITHUB, "http://www.github.com/vitaly-khan");
@@ -45,7 +45,7 @@ public class ResumeTestData {
                         ),
                         new Organization.Position(
                                 DateUtil.of(2008, Month.SEPTEMBER),
-                                DateUtil.of(20010, Month.MAY),
+                                DateUtil.of(2010, Month.MAY),
 
                                 "Ассистент кафедры",
                                 "Преподавал информатику, в т.ч. основы программирования"
@@ -56,7 +56,7 @@ public class ResumeTestData {
                         "управляющий",
                         "Выполнял широкий спектр обязанностей: и менеджера, и программиста, и HR"))
         ));
-        R2 = new Resume(UUID2, "Regina");
-        R3 = new Resume(UUID3, "Timur");
+        R2 = new Resume(UUID2, "Name 2");
+        R3 = new Resume(UUID3, "Name 3");
     }
 }

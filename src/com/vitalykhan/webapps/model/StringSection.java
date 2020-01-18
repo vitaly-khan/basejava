@@ -3,12 +3,14 @@ package com.vitalykhan.webapps.model;
 import java.util.Objects;
 
 public class StringSection extends Section {
-    private String content; //It's final at Grigory's
+    private String content;
+
+    public StringSection() {
+    }
 
     public StringSection(String content) {
         Objects.requireNonNull(content, "Section mustn't be null");
         this.content = content;
-
     }
 
     public String getContent() {

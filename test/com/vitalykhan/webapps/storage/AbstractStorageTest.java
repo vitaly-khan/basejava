@@ -9,6 +9,7 @@ import org.junit.Before;
 import org.junit.Test;
 
 import java.io.File;
+import java.util.Arrays;
 import java.util.List;
 
 public abstract class AbstractStorageTest {
@@ -65,18 +66,16 @@ public abstract class AbstractStorageTest {
 
     @Test
     public void getAllSorted() {
-        Assert.assertEquals(3, storage.size());
         List<Resume> resumeList = storage.getAllSorted();
-        Assert.assertEquals("Regina", resumeList.get(0).getFullName());
-        Assert.assertEquals("Timur", resumeList.get(1).getFullName());
-        Assert.assertEquals("Vitaly Khan", resumeList.get(2).getFullName());
+        Assert.assertEquals(3, resumeList.size());
+        Assert.assertEquals(resumeList, Arrays.asList(ResumeTestData.R1, ResumeTestData.R2, ResumeTestData.R3));
     }
 
     @Test
     public void get() {
-        Assert.assertEquals("Vitaly Khan", storage.get("1").getFullName());
-        Assert.assertEquals("Regina", storage.get("2").getFullName());
-        Assert.assertEquals("Timur", storage.get("3").getFullName());
+        Assert.assertEquals(ResumeTestData.R1, storage.get(ResumeTestData.R1.getUuid()));
+        Assert.assertEquals(ResumeTestData.R2, storage.get(ResumeTestData.R2.getUuid()));
+//        Assert.assertEquals(ResumeTestData.R3, storage.get(ResumeTestData.R3.getUuid()));
     }
 
 

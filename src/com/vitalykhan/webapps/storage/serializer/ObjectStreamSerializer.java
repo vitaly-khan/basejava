@@ -5,7 +5,7 @@ import com.vitalykhan.webapps.model.Resume;
 
 import java.io.*;
 
-public class ObjectStreamStorage implements StreamSerializer {
+public class ObjectStreamSerializer implements StreamSerializer {
 
     @Override
     public Resume doRead(InputStream is) throws IOException {
