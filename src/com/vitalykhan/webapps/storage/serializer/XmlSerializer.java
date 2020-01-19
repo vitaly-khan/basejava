@@ -6,7 +6,7 @@ import com.vitalykhan.webapps.utils.XmlParser;
 import java.io.*;
 import java.nio.charset.StandardCharsets;
 
-public class XmlSerializer implements StreamSerializer {
+public class XmlSerializer implements Serializer {
     private XmlParser xmlParser;
 
     public XmlSerializer() {

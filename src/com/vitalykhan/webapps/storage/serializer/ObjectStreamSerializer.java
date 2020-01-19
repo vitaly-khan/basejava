@@ -5,17 +5,15 @@ import com.vitalykhan.webapps.model.Resume;
 
 import java.io.*;
 
-public class ObjectStreamSerializer implements StreamSerializer {
+public class ObjectStreamSerializer implements Serializer {
 
     @Override
     public Resume doRead(InputStream is) throws IOException {
-        Resume resume = null;
         try (ObjectInputStream ois = new ObjectInputStream(is)) {
-            resume = (Resume) ois.readObject();
+            return (Resume) ois.readObject();
         } catch (ClassNotFoundException e) {
             throw new StorageException("Class Resume not found", "", e);
         }
-        return resume;
     }
 
     @Override

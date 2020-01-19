@@ -2,7 +2,7 @@ package com.vitalykhan.webapps.storage;
 
 import com.vitalykhan.webapps.exception.StorageException;
 import com.vitalykhan.webapps.model.Resume;
-import com.vitalykhan.webapps.storage.serializer.StreamSerializer;
+import com.vitalykhan.webapps.storage.serializer.Serializer;
 
 import java.io.*;
 import java.nio.file.Files;
@@ -16,13 +16,13 @@ import java.util.stream.Stream;
 public class PathStorage extends AbstractStorage<Path> {
 
     private Path directory;
-    private StreamSerializer streamSerializer;
+    private Serializer serializer;
 
-    protected PathStorage(StreamSerializer streamSerializer, String dir) {
+    protected PathStorage(Serializer serializer, String dir) {
         Objects.requireNonNull(dir, "directory mustn't be null");
         this.directory = Paths.get(dir);
 
-        this.streamSerializer = streamSerializer;
+        this.serializer = serializer;
         if (!Files.isDirectory(directory) || !Files.isWritable(directory)) {
             throw new IllegalArgumentException(Paths.get(dir) + " is not directory or is not writable");
         }
@@ -47,7 +47,7 @@ public class PathStorage extends AbstractStorage<Path> {
     @Override
     void doUpdate(Path index, Resume resume) {
         try {
-            streamSerializer.doWrite(resume, new BufferedOutputStream(Files.newOutputStream(index)));
+            serializer.doWrite(resume, new BufferedOutputStream(Files.newOutputStream(index)));
         } catch (IOException e) {
             throw new StorageException("File write error", resume.getUuid(), e);
         }
@@ -65,7 +65,7 @@ public class PathStorage extends AbstractStorage<Path> {
     @Override
     Resume doGet(Path index) {
         try {
-            return streamSerializer.doRead(new BufferedInputStream(Files.newInputStream(index)));
+            return serializer.doRead(new BufferedInputStream(Files.newInputStream(index)));
         } catch (IOException e) {
             throw new StorageException("File read error", index.toString(), e);
         }

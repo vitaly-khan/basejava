@@ -2,7 +2,7 @@ package com.vitalykhan.webapps.storage;
 
 import com.vitalykhan.webapps.exception.StorageException;
 import com.vitalykhan.webapps.model.Resume;
-import com.vitalykhan.webapps.storage.serializer.StreamSerializer;
+import com.vitalykhan.webapps.storage.serializer.Serializer;
 
 import java.io.*;
 import java.util.ArrayList;
@@ -13,12 +13,12 @@ public class FileStorage extends AbstractStorage<File> {
 
     private File directory;
 
-    private StreamSerializer streamSerializer;
+    private Serializer serializer;
 
-    protected FileStorage(StreamSerializer streamSerializer, File directory) {
+    protected FileStorage(Serializer serializer, File directory) {
         Objects.requireNonNull(directory, "directory mustn't be null");
 
-        this.streamSerializer = streamSerializer;
+        this.serializer = serializer;
         if (!directory.isDirectory()) {
             throw new IllegalArgumentException(directory.getAbsolutePath() + " is not directory");
         }
@@ -46,7 +46,7 @@ public class FileStorage extends AbstractStorage<File> {
     @Override
     void doUpdate(File index, Resume resume) {
         try {
-            streamSerializer.doWrite(resume, new BufferedOutputStream(new FileOutputStream(index)));
+            serializer.doWrite(resume, new BufferedOutputStream(new FileOutputStream(index)));
         } catch (IOException e) {
             throw new StorageException("File write error", resume.getUuid(), e);
         }
@@ -63,7 +63,7 @@ public class FileStorage extends AbstractStorage<File> {
     Resume doGet(File index) {
 
         try {
-            return streamSerializer.doRead(new BufferedInputStream(new FileInputStream(index)));
+            return serializer.doRead(new BufferedInputStream(new FileInputStream(index)));
         } catch (IOException e) {
             throw new StorageException("File read error", index.getName(), e);
         }

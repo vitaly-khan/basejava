@@ -75,7 +75,7 @@ public abstract class AbstractStorageTest {
     public void get() {
         Assert.assertEquals(ResumeTestData.R1, storage.get(ResumeTestData.R1.getUuid()));
         Assert.assertEquals(ResumeTestData.R2, storage.get(ResumeTestData.R2.getUuid()));
-//        Assert.assertEquals(ResumeTestData.R3, storage.get(ResumeTestData.R3.getUuid()));
+        Assert.assertEquals(ResumeTestData.R3, storage.get(ResumeTestData.R3.getUuid()));
     }
 
 
