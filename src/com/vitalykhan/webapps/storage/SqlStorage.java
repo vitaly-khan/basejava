@@ -3,12 +3,14 @@ package com.vitalykhan.webapps.storage;
 import com.vitalykhan.webapps.exception.ResumeDoesntExistInStorageException;
 import com.vitalykhan.webapps.exception.ResumeExistsInStorageException;
 import com.vitalykhan.webapps.exception.StorageException;
+import com.vitalykhan.webapps.model.ContactType;
 import com.vitalykhan.webapps.model.Resume;
 import com.vitalykhan.webapps.sql.ConnectionFactory;
 
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 public class SqlStorage implements Storage {
     private final ConnectionFactory connectionFactory;
@@ -78,44 +80,44 @@ public class SqlStorage implements Storage {
 
     @Override
     public void save(Resume r) {
-//        executeTransaction(connection -> {
-//            try (PreparedStatement ps = connection.prepareStatement(
-//                    "INSERT INTO resume(uuid, full_name) VALUES (?,?)")) {
-//                ps.setString(1, r.getUuid());
-//                ps.setString(2, r.getFullName());
-//                ps.executeUpdate();
-//            } catch (SQLException e) {
-//                throw new ResumeExistsInStorageException(r.getUuid());
-//            }
-//            PreparedStatement ps = connection.prepareStatement(
-//                    "INSERT INTO contact(resume_uuid, type, value) VALUES (?,?,?)");
-//            for (Map.Entry<ContactType, String> entry : r.getContactsMap().entrySet()) {
-//                ps.setString(1, r.getUuid());
-//                ps.setString(2, entry.getKey().name());
-//                ps.setString(3, entry.getValue());
-//                ps.addBatch();
-//            }
-//            ps.executeBatch();
-//            ps.close();
-//            return null;
-//        });
-
-        try (Connection connection = connectionFactory.getConnection();
-             PreparedStatement statementInsert = connection.prepareStatement(
-                     "INSERT INTO resume(uuid, full_name) VALUES (?,?)");
-             PreparedStatement statementSelect = connection.prepareStatement(
-                     "SELECT * FROM resume WHERE uuid = ?")) {
-            statementSelect.setString(1, r.getUuid());
-            if (!statementSelect.executeQuery().next()) {//check given Resume doesn't exist
-                statementInsert.setString(1, r.getUuid());
-                statementInsert.setString(2, r.getFullName());
-                statementInsert.executeUpdate();
-            } else {
+        executeTransaction(connection -> {
+            try (PreparedStatement ps = connection.prepareStatement(
+                    "INSERT INTO resume(uuid, full_name) VALUES (?,?)")) {
+                ps.setString(1, r.getUuid());
+                ps.setString(2, r.getFullName());
+                ps.executeUpdate();
+            } catch (SQLException e) {
                 throw new ResumeExistsInStorageException(r.getUuid());
             }
-        } catch (SQLException e) {
-            throw new StorageException("SQL Storage exception", "", e);
-        }
+            PreparedStatement ps = connection.prepareStatement(
+                    "INSERT INTO contact(resume_uuid, type, value) VALUES (?,?,?)");
+            for (Map.Entry<ContactType, String> entry : r.getContactsMap().entrySet()) {
+                ps.setString(1, r.getUuid());
+                ps.setString(2, entry.getKey().name());
+                ps.setString(3, entry.getValue());
+                ps.addBatch();
+            }
+            ps.executeBatch();
+            ps.close();
+            return null;
+        });
+
+//        try (Connection connection = connectionFactory.getConnection();
+//             PreparedStatement statementInsert = connection.prepareStatement(
+//                     "INSERT INTO resume(uuid, full_name) VALUES (?,?)");
+//             PreparedStatement statementSelect = connection.prepareStatement(
+//                     "SELECT * FROM resume WHERE uuid = ?")) {
+//            statementSelect.setString(1, r.getUuid());
+//            if (!statementSelect.executeQuery().next()) {//check given Resume doesn't exist
+//                statementInsert.setString(1, r.getUuid());
+//                statementInsert.setString(2, r.getFullName());
+//                statementInsert.executeUpdate();
+//            } else {
+//                throw new ResumeExistsInStorageException(r.getUuid());
+//            }
+//        } catch (SQLException e) {
+//            throw new StorageException("SQL Storage exception", "", e);
+//        }
     }
 
     @Override
@@ -133,8 +135,8 @@ public class SqlStorage implements Storage {
                     return result;
                 },
                 "SELECT * FROM resume r " +
-//                        "LEFT JOIN contact c " +
-//                        "ON r.uuid=c.resume_uuid " +
+                        "LEFT JOIN contact c " +
+                        "ON r.uuid=c.resume_uuid " +
                         "WHERE r.uuid=?",
                 uuid);
     }
