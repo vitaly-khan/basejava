@@ -1,5 +1,6 @@
 package com.vitalykhan.webapps.storage;
 
+import com.vitalykhan.webapps.Config;
 import com.vitalykhan.webapps.ResumeTestData;
 import com.vitalykhan.webapps.exception.ResumeDoesntExistInStorageException;
 import com.vitalykhan.webapps.exception.ResumeExistsInStorageException;
@@ -13,7 +14,7 @@ import java.util.Arrays;
 import java.util.List;
 
 public abstract class AbstractStorageTest {
-    protected static final File WORKING_DIR = new File("c:/Java/Project/basejava/storage");
+    protected static final File WORKING_DIR = Config.get().getStorageDir();
     Storage storage;
 
     public AbstractStorageTest(Storage storage) {
