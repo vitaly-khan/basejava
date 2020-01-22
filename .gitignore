@@ -4,7 +4,7 @@ out
 log
 *.log
 lib/
-storage/
+/storage/
 
 
 

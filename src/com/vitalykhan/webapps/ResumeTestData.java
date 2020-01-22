@@ -11,8 +11,8 @@ public class ResumeTestData {
     public static final String UUID3 = "3";
 
     static {
-        R1 = new Resume(UUID1, "Name 1");
-        R2 = new Resume(UUID2, "Name 2");
+        R1 = new Resume(UUID1, "Name 2");
+        R2 = new Resume(UUID2, "Name 1");
         R3 = new Resume(UUID3, "Name 3");
 
 
