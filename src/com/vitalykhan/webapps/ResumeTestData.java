@@ -1,14 +1,17 @@
 package com.vitalykhan.webapps;
 
+import com.vitalykhan.webapps.model.ContactType;
 import com.vitalykhan.webapps.model.Resume;
+
+import java.util.UUID;
 
 public class ResumeTestData {
     public static final Resume R1;
     public static final Resume R2;
     public static final Resume R3;
-    public static final String UUID1 = "1";
-    public static final String UUID2 = "2";
-    public static final String UUID3 = "3";
+    public static final String UUID1 = UUID.randomUUID().toString();
+    public static final String UUID2 = UUID.randomUUID().toString();
+    public static final String UUID3 = UUID.randomUUID().toString();
 
     static {
         R1 = new Resume(UUID1, "Name 2");
@@ -16,9 +19,10 @@ public class ResumeTestData {
         R3 = new Resume(UUID3, "Name 3");
 
 
-//        R1.addContact(ContactType.PHONE_NUMBER, "+7-910-1234567");
-//        R1.addContact(ContactType.GITHUB, "http://www.github.com/vitaly-khan");
-//        R1.addContact(ContactType.EMAIL, "a@b.ru");
+        R1.addContact(ContactType.PHONE_NUMBER, "+7-910-1234567");
+        R1.addContact(ContactType.GITHUB, "http://www.github.com/vitaly-khan");
+        R1.addContact(ContactType.EMAIL, "a@b.ru");
+        R2.addContact(ContactType.EMAIL, "regina@b.ru");
 //
 //        R1.addSection(SectionType.PERSONAL, new StringSection(
 //                "хорошо развитое математическое (логическое) мышление, грамотность, ответственность, уравновешенность"));

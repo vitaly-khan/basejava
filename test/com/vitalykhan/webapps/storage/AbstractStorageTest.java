@@ -4,6 +4,7 @@ import com.vitalykhan.webapps.Config;
 import com.vitalykhan.webapps.ResumeTestData;
 import com.vitalykhan.webapps.exception.ResumeDoesntExistInStorageException;
 import com.vitalykhan.webapps.exception.ResumeExistsInStorageException;
+import com.vitalykhan.webapps.model.ContactType;
 import com.vitalykhan.webapps.model.Resume;
 import org.junit.Assert;
 import org.junit.Before;
@@ -46,6 +47,8 @@ public abstract class AbstractStorageTest {
     @Test
     public void update() {
         Resume newResume = new Resume(ResumeTestData.UUID2, "Updated Regina");
+        newResume.addContact(ContactType.PHONE_NUMBER, "123-123-123");
+        newResume.addContact(ContactType.EMAIL, "vvv@rrr.ru");
         storage.update(newResume);
         Assert.assertEquals(newResume, storage.get(ResumeTestData.UUID2));
         Assert.assertEquals(3, storage.size());
@@ -72,7 +75,7 @@ public abstract class AbstractStorageTest {
     public void getAllSorted() {
         List<Resume> resumeList = storage.getAllSorted();
         Assert.assertEquals(3, resumeList.size());
-        Assert.assertEquals(resumeList, Arrays.asList(ResumeTestData.R2, ResumeTestData.R1, ResumeTestData.R3));
+        Assert.assertEquals(Arrays.asList(ResumeTestData.R2, ResumeTestData.R1, ResumeTestData.R3), resumeList);
     }
 
     @Test
@@ -92,7 +95,7 @@ public abstract class AbstractStorageTest {
     public void delete() {
 
         try {
-            storage.delete("1");
+            storage.delete(ResumeTestData.UUID1);
         } catch (Exception e) {
             Assert.fail();
         }
