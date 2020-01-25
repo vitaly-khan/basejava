@@ -145,6 +145,8 @@ public class SqlStorage implements Storage {
 
     @Override
     public List<Resume> getAllSorted() {
+        //TODO These 2 queries below must be enclosed into single transaction
+
         List<Resume> resumeList = executeSql(ps -> {
             ResultSet rs = ps.executeQuery();
             List<Resume> resumes = new ArrayList<>();
@@ -153,6 +155,7 @@ public class SqlStorage implements Storage {
             }
             return resumes;
         }, "SELECT * FROM resume r ORDER BY full_name, uuid");
+
         Map<String, Map<ContactType, String>> contactMap = executeSql(ps -> {
             Map<String, Map<ContactType, String>> contacts = new HashMap<>();
             ResultSet rs = ps.executeQuery();
@@ -175,10 +178,7 @@ public class SqlStorage implements Storage {
                 }
             }
         }
-
-
         return resumeList;
-
     }
 
     @Override
