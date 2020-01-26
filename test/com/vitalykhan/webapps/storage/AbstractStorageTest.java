@@ -14,6 +14,8 @@ import java.io.File;
 import java.util.Arrays;
 import java.util.List;
 
+import static org.junit.Assert.assertEquals;
+
 public abstract class AbstractStorageTest {
     protected static final File WORKING_DIR = Config.get().getStorageDir();
     Storage storage;
@@ -33,14 +35,14 @@ public abstract class AbstractStorageTest {
     @Test
     public void clear() {
         storage.clear();
-        Assert.assertEquals(0, storage.size());
+        assertEquals(0, storage.size());
     }
 
     @Test
     public void size() {
-        Assert.assertEquals(3, storage.size());
+        assertEquals(3, storage.size());
         storage.clear();
-        Assert.assertEquals(0, storage.size());
+        assertEquals(0, storage.size());
 
     }
 
@@ -50,8 +52,8 @@ public abstract class AbstractStorageTest {
         newResume.addContact(ContactType.PHONE_NUMBER, "123-123-123");
         newResume.addContact(ContactType.EMAIL, "vvv@rrr.ru");
         storage.update(newResume);
-        Assert.assertEquals(newResume, storage.get(ResumeTestData.UUID2));
-        Assert.assertEquals(3, storage.size());
+        assertEquals(newResume, storage.get(ResumeTestData.UUID2));
+        assertEquals(3, storage.size());
     }
 
     @Test(expected = ResumeDoesntExistInStorageException.class)
@@ -62,7 +64,8 @@ public abstract class AbstractStorageTest {
     @Test
     public void save() {
         storage.save(new Resume("7", "Natasha"));
-        Assert.assertEquals(4, storage.size());
+        assertEquals(4, storage.size());
+        storage.get(ResumeTestData.UUID1);
         storage.get("7");
     }
 
@@ -74,15 +77,15 @@ public abstract class AbstractStorageTest {
     @Test
     public void getAllSorted() {
         List<Resume> resumeList = storage.getAllSorted();
-        Assert.assertEquals(3, resumeList.size());
-        Assert.assertEquals(Arrays.asList(ResumeTestData.R2, ResumeTestData.R1, ResumeTestData.R3), resumeList);
+        assertEquals(3, resumeList.size());
+        assertEquals(Arrays.asList(ResumeTestData.R2, ResumeTestData.R1, ResumeTestData.R3), resumeList);
     }
 
     @Test
     public void get() {
-        Assert.assertEquals(ResumeTestData.R1, storage.get(ResumeTestData.R1.getUuid()));
-        Assert.assertEquals(ResumeTestData.R2, storage.get(ResumeTestData.R2.getUuid()));
-        Assert.assertEquals(ResumeTestData.R3, storage.get(ResumeTestData.R3.getUuid()));
+        assertEquals(ResumeTestData.R1, storage.get(ResumeTestData.R1.getUuid()));
+        assertEquals(ResumeTestData.R2, storage.get(ResumeTestData.R2.getUuid()));
+        assertEquals(ResumeTestData.R3, storage.get(ResumeTestData.R3.getUuid()));
     }
 
 
@@ -99,7 +102,7 @@ public abstract class AbstractStorageTest {
         } catch (Exception e) {
             Assert.fail();
         }
-        Assert.assertEquals(2, storage.size());
+        assertEquals(2, storage.size());
         storage.get("1");
     }
 

@@ -3,15 +3,11 @@ package com.vitalykhan.webapps.storage;
 import com.vitalykhan.webapps.exception.ResumeDoesntExistInStorageException;
 import com.vitalykhan.webapps.exception.ResumeExistsInStorageException;
 import com.vitalykhan.webapps.exception.StorageException;
-import com.vitalykhan.webapps.model.ContactType;
-import com.vitalykhan.webapps.model.Resume;
+import com.vitalykhan.webapps.model.*;
 import com.vitalykhan.webapps.sql.ConnectionFactory;
 
 import java.sql.*;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 public class SqlStorage implements Storage {
     private final ConnectionFactory connectionFactory;
@@ -103,32 +99,82 @@ public class SqlStorage implements Storage {
             }
             ps.executeBatch();
         }
+        try (PreparedStatement ps = connection.prepareStatement(
+                "INSERT INTO section(resume_uuid, type, value) VALUES (?,?,?)")) {
+            for (Map.Entry<SectionType, Section> entry : r.getSectionsMap().entrySet()) {
+                ps.setString(1, r.getUuid());
+                ps.setString(2, entry.getKey().name());
+
+                Section section = entry.getValue();
+                String value = null;
+                if (section instanceof StringSection) {
+                    value = ((StringSection) section).getContent();
+                } else if (section instanceof ListSection) {
+                    value = ((ListSection) section).getItems().stream()
+                            .reduce("", (s, str) -> s.concat(str).concat("\n"));
+                    value = value.substring(0, value.length() - 1);
+                }
+                ps.setString(3, value);
+                ps.addBatch();
+            }
+            ps.executeBatch();
+        }
         return null;
     }
 
     @Override
     public Resume get(String uuid) {
-        return executeSql(ps -> {
-                    ResultSet rs = ps.executeQuery();
-                    if (!rs.next()) {
-                        throw new ResumeDoesntExistInStorageException(uuid);
-                    }
-                    Resume result = new Resume(uuid, rs.getString("full_name"));
-                    do {
-                        String type = rs.getString("type");
-                        if (type == null) {
-                            break;
-                        }
-                        result.addContact(ContactType.valueOf(type),
-                                rs.getString("value"));
-                    } while (rs.next());
-                    return result;
-                },
-                "SELECT * FROM resume r " +
-                        "LEFT JOIN contact c " +
-                        "ON r.uuid=c.resume_uuid " +
-                        "WHERE r.uuid=?",
-                uuid);
+
+        return executeTransaction(connection -> {
+            try (PreparedStatement ps = connection.prepareStatement("SELECT * FROM resume WHERE uuid=?");
+                 PreparedStatement psContacts = connection.prepareStatement("SELECT * FROM contact WHERE resume_uuid=?");
+                 PreparedStatement psSections = connection.prepareStatement("SELECT * FROM section WHERE resume_uuid=?")) {
+
+                ps.setString(1, uuid);
+                ResultSet rs = ps.executeQuery();
+                if (!rs.next()) {
+                    throw new ResumeDoesntExistInStorageException(uuid);
+                }
+                Resume result = new Resume(uuid, rs.getString("full_name"));
+
+                //Reading and adding contacts
+                psContacts.setString(1, uuid);
+                ResultSet rsSections = psContacts.executeQuery();
+                while (rsSections.next()) {
+                    String cType = rsSections.getString("type");
+                    // No NPE check because of DB structure
+                    result.addContact(ContactType.valueOf(cType), rsSections.getString("value"));
+                }
+
+                //Reading and adding sections
+                psSections.setString(1, uuid);
+                rsSections = psSections.executeQuery();
+
+                while (rsSections.next()) {
+                    createAndAddSection(rsSections, result);
+                }
+                return result;
+            }
+        });
+    }
+
+    private void createAndAddSection(ResultSet rs, Resume resume) throws SQLException {
+        Section section = null;
+        SectionType type = SectionType.valueOf(rs.getString("type"));
+        switch (type) {
+            case PERSONAL:
+            case OBJECTIVE:
+                section = new StringSection(rs.getString("value"));
+                break;
+            case ACHIEVEMENT:
+            case QUALIFICATIONS:
+                section = new ListSection(new ArrayList<>(Arrays.asList(
+                        rs.getString("value").split("\n"))));
+                break;
+            default:
+                throw new IllegalStateException("Unknown Section Type");
+        }
+        resume.addSection(type, section);
     }
 
     @Override
@@ -145,40 +191,36 @@ public class SqlStorage implements Storage {
 
     @Override
     public List<Resume> getAllSorted() {
-        //TODO These 2 queries below must be enclosed into single transaction
 
-        List<Resume> resumeList = executeSql(ps -> {
-            ResultSet rs = ps.executeQuery();
-            List<Resume> resumes = new ArrayList<>();
-            while (rs.next()) {
-                resumes.add(new Resume(rs.getString("uuid"), rs.getString("full_name")));
-            }
-            return resumes;
-        }, "SELECT * FROM resume r ORDER BY full_name, uuid");
+        return executeTransaction(connection -> {
+            Map<String, Resume> resumes = new LinkedHashMap<>();
 
-        Map<String, Map<ContactType, String>> contactMap = executeSql(ps -> {
-            Map<String, Map<ContactType, String>> contacts = new HashMap<>();
-            ResultSet rs = ps.executeQuery();
-            while (rs.next()) {
-                String resume_uuid = rs.getString("resume_uuid");
-                Map<ContactType, String> currentMap = contacts.get(resume_uuid);
-                if (currentMap == null) {
-                    contacts.put(resume_uuid, new HashMap<>());
-                    currentMap = contacts.get(resume_uuid);
+            try (PreparedStatement ps = connection.prepareStatement("SELECT * FROM resume r ORDER BY full_name, uuid");
+                 PreparedStatement psContacts = connection.prepareStatement("SELECT * FROM contact");
+                 PreparedStatement psSections = connection.prepareStatement("SELECT * FROM section")) {
+
+                ResultSet rs = ps.executeQuery();
+                while (rs.next()) {
+                    String uuid = rs.getString("uuid");
+                    resumes.put(uuid, new Resume(uuid, rs.getString("full_name")));
                 }
-                currentMap.put(ContactType.valueOf(rs.getString("type")), rs.getString("value"));
-            }
-            return contacts;
-        }, "SELECT * FROM contact");
-        for (Resume resume : resumeList) {
-            Map<ContactType, String> currentMap = contactMap.get(resume.getUuid());
-            if (currentMap != null) {
-                for (Map.Entry<ContactType, String> entry : currentMap.entrySet()) {
-                    resume.addContact(entry.getKey(), entry.getValue());
+
+                ResultSet rsContacts = psContacts.executeQuery();
+                while (rsContacts.next()) {
+                    resumes.get(rsContacts.getString("resume_uuid"))
+                            .addContact(ContactType.valueOf(rsContacts.getString("type")),
+                            rsContacts.getString("value"));
                 }
+
+                ResultSet rsSections = psSections.executeQuery();
+                while (rsSections.next()) {
+
+                    createAndAddSection(rsSections, resumes.get(rsSections.getString("resume_uuid")));
+                }
+
+                return new ArrayList<>(resumes.values());
             }
-        }
-        return resumeList;
+        });
     }
 
     @Override

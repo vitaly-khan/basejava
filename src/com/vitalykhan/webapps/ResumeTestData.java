@@ -1,7 +1,6 @@
 package com.vitalykhan.webapps;
 
-import com.vitalykhan.webapps.model.ContactType;
-import com.vitalykhan.webapps.model.Resume;
+import com.vitalykhan.webapps.model.*;
 
 import java.util.UUID;
 
@@ -23,11 +22,13 @@ public class ResumeTestData {
         R1.addContact(ContactType.GITHUB, "http://www.github.com/vitaly-khan");
         R1.addContact(ContactType.EMAIL, "a@b.ru");
         R2.addContact(ContactType.EMAIL, "regina@b.ru");
-//
-//        R1.addSection(SectionType.PERSONAL, new StringSection(
-//                "хорошо развитое математическое (логическое) мышление, грамотность, ответственность, уравновешенность"));
-//        R1.addSection(SectionType.ACHIEVEMENT, new ListSection(
-//                "Achievement1", "Achievement2", "Achievement3"));
+
+        R1.addSection(SectionType.PERSONAL, new StringSection(
+                "хорошо развитое математическое (логическое) мышление, грамотность, ответственность, уравновешенность"));
+        R1.addSection(SectionType.ACHIEVEMENT, new ListSection(
+                "Achievement1", "Achievement2", "Achievement3"));
+        R1.addSection(SectionType.QUALIFICATIONS, new ListSection("Java Core", "HTML, SQL", "JDBC, Spring, Hibernate"));
+
 //
 //        R1.addSection(SectionType.EDUCATION, new OrganizationSection(
 //                new Organization(
@@ -37,7 +38,6 @@ public class ResumeTestData {
 //                        "Дневное обучение, Автоматизированные системы ОИУ",
 //                        "")
 //        ));
-//        R1.addSection(SectionType.QUALIFICATIONS, new ListSection("Java Core", "HTML, SQL", "JDBC, Spring, Hibernate"));
 //        R1.addSection(SectionType.EXPERIENCE, new OrganizationSection(
 //                new Organization(
 //                        "НИ РХТУ им.Д.И.Менделеева", null,
