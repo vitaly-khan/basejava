@@ -1,14 +1,10 @@
 package com.vitalykhan.webapps.web;
 
 import com.vitalykhan.webapps.Config;
-import com.vitalykhan.webapps.model.*;
 import com.vitalykhan.webapps.storage.Storage;
 
 import javax.servlet.http.HttpServletRequest;
 import java.io.IOException;
-import java.io.PrintWriter;
-import java.util.List;
-import java.util.Map;
 
 public class Servlet extends javax.servlet.http.HttpServlet {
     Storage storage = Config.get().getStorage();
@@ -19,9 +15,10 @@ public class Servlet extends javax.servlet.http.HttpServlet {
     protected void doGet(HttpServletRequest request, javax.servlet.http.HttpServletResponse response) throws javax.servlet.ServletException, IOException {
         request.setCharacterEncoding("UTF-8");
         response.setContentType("text/html; charset=UTF-8");
-//        request.setAttribute("resumes", Config.get().getStorage().getAllSorted());
-//        request.getRequestDispatcher("/resumes.jsp").forward(request, response);
+        request.setAttribute("resumes", Config.get().getStorage().getAllSorted());
+        request.getRequestDispatcher("/WEB-INF/jsp/resumes.jsp").forward(request, response);
 
+/*
         PrintWriter writer = response.getWriter();
         List<Resume> resumeList = storage.getAllSorted();
 
@@ -53,5 +50,6 @@ public class Servlet extends javax.servlet.http.HttpServlet {
             writer.println("<br><br>");
         }
         writer.println("</body></html>");
+*/
     }
 }
