@@ -10,7 +10,17 @@ import java.io.InputStream;
 import java.util.Properties;
 
 public class Config {
-    private static final File PROPS = new File("./config/resumes.properties");
+    private static final File PROPS = new File(getRootDir(), "config\\resumes.properties");
+
+    private static String getRootDir() {
+        String rootDir = System.getProperty("rootDir");
+        File file = new File(rootDir == null ? "." : rootDir);
+        if (!file.isDirectory()) {
+            throw new IllegalStateException("Something wrong with root directory. Check VM Options.");
+        }
+        return rootDir;
+    }
+
     private static final Config instance = new Config();
 
     private final File storageDir;
