@@ -2,7 +2,7 @@ package com.vitalykhan.webapps.model;
 
 public enum SectionType {
     PERSONAL ("Личные качества"),
-    OBJECTIVE ("Позиция"),
+    OBJECTIVE ("Цель"),
     ACHIEVEMENT ("Достижения"),
     QUALIFICATIONS ("Квалификация"),
     EXPERIENCE ("Опыт работы"),

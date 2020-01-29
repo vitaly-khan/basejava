@@ -1,22 +1,97 @@
 package com.vitalykhan.webapps.web;
 
 import com.vitalykhan.webapps.Config;
+import com.vitalykhan.webapps.model.*;
 import com.vitalykhan.webapps.storage.Storage;
 
 import javax.servlet.http.HttpServletRequest;
 import java.io.IOException;
+import java.util.Arrays;
+import java.util.List;
+import java.util.stream.Collectors;
 
 public class Servlet extends javax.servlet.http.HttpServlet {
+    public static final String RESUMES_JSP_PATH = "/WEB-INF/jsp/resumesList.jsp";
+    public static final String VIEW_JSP_PATH = "/WEB-INF/jsp/view.jsp";
+    public static final String EDIT_JSP_PATH = "WEB-INF/jsp/edit.jsp";
     Storage storage = Config.get().getStorage();
 
     protected void doPost(HttpServletRequest request, javax.servlet.http.HttpServletResponse response) throws javax.servlet.ServletException, IOException {
+        request.setCharacterEncoding("UTF-8");
+        String uuid = request.getParameter("uuid");
+        String fullName = request.getParameter("fullName");
+        Resume resume = storage.get(uuid);
+        resume.setFullName(fullName);
+        for (ContactType contactType : ContactType.values()) {
+            String parameter = request.getParameter(contactType.name());
+            if (parameter != null && parameter.trim().length() > 0) {
+                resume.addContact(contactType, parameter);
+            } else {
+                resume.getContactsMap().remove(contactType);
+            }
+        }
+        for (SectionType type : SectionType.values()) {
+            String[] parameters = request.getParameterValues(type.name());
+            switch (type) {
+                case PERSONAL:
+                case OBJECTIVE:
+                    if (notNullValues(parameters).size() == 1) {
+                        resume.addSection(type, new StringSection(parameters[0]));
+                    } else {
+                        resume.getSectionsMap().remove(type);
+                    }
+                    break;
+                case ACHIEVEMENT:
+                case QUALIFICATIONS:
+                    List<String> list = notNullValues(parameters);
+                    if (list.size() > 0) {
+                        resume.addSection(type, new ListSection(list));
+                    } else {
+                        resume.getSectionsMap().remove(type);
+                    }
+                case EDUCATION:
+                case EXPERIENCE:
+                    //TODO
+                    break;
+            }
+        }
+        storage.update(resume);
+        response.sendRedirect("serv");
+    }
+
+    private List<String> notNullValues(String[] parameters) {
+        return Arrays.stream(parameters).filter(x -> x.trim().length() > 0).collect(Collectors.toList());
     }
 
     protected void doGet(HttpServletRequest request, javax.servlet.http.HttpServletResponse response) throws javax.servlet.ServletException, IOException {
-        request.setCharacterEncoding("UTF-8");
-        response.setContentType("text/html; charset=UTF-8");
-        request.setAttribute("resumes", Config.get().getStorage().getAllSorted());
-        request.getRequestDispatcher("/WEB-INF/jsp/resumes.jsp").forward(request, response);
+
+        String uuid = request.getParameter("uuid");
+        String action = request.getParameter("action");
+        if (action == null) {
+            request.setCharacterEncoding("UTF-8");
+            response.setContentType("text/html; charset=UTF-8");
+            request.setAttribute("resumes", storage.getAllSorted());
+            request.getRequestDispatcher(RESUMES_JSP_PATH).forward(request, response);
+            return;
+        }
+        Resume r;
+        switch (action) {
+            case "delete":
+                storage.delete(uuid);
+                response.sendRedirect("serv");
+                return;
+            case "edit":
+            case "view":
+                r = storage.get(uuid);
+                request.setAttribute("resume", r);
+                request.getRequestDispatcher("view".equals(action) ? VIEW_JSP_PATH :
+                        EDIT_JSP_PATH).forward(request, response);
+                break;
+            default:
+                throw new IllegalStateException("Wrong action with resume!");
+        }
+
+
 
 /*
         PrintWriter writer = response.getWriter();

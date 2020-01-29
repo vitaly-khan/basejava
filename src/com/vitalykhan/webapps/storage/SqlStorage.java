@@ -176,6 +176,11 @@ public class SqlStorage implements Storage {
                 section = new ListSection(new ArrayList<>(Arrays.asList(
                         rs.getString("value").split("\n"))));
                 break;
+            case EXPERIENCE:
+            case EDUCATION:
+                section = new OrganizationSection();
+                break;
+
             default:
                 throw new IllegalStateException("Unknown Section Type");
         }

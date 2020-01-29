@@ -1,17 +1,24 @@
 package com.vitalykhan.webapps.model;
 
 public enum ContactType {
-    PHONE_NUMBER("Номер телефона:"),
-    EMAIL("E-Mail"),
-    GITHUB("Аккаунт на Гитхабе");
+    PHONE_NUMBER("Номер телефона", null),
+    EMAIL("E-Mail", "mailto"),
+    GITHUB("Github", "github"),
+    SKYPE("Skype", "skype");
 
     private String title;
-
-    ContactType(String title) {
-        this.title = title;
-    }
+    private String ref;
 
     public String getTitle() {
         return title;
+    }
+
+    public String getRef() {
+        return ref;
+    }
+
+    ContactType(String title, String ref) {
+        this.title = title;
+        this.ref = ref;
     }
 }
