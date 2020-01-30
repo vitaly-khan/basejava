@@ -13,6 +13,8 @@
 </head>
 <body>
 <section>
+
+    <h2>${resume.uuid == null ? "Создание нового " : "Редактирование"} резюме</h2>
     <form method="post" action="serv" enctype="application/x-www-form-urlencoded">
         <input type="hidden" name="uuid" value="${resume.uuid}">
         <dl>
@@ -37,8 +39,9 @@
             </dl>
         </c:forEach>
         <hr>
-        <button type="submit">Сохранить</button>
-        <button onclick="window.history.back()">Отменить</button>
+        <button class="key" type="submit">Сохранить</button>
+        <button class="key" onclick="window.history.go(-1)">Отменить</button>
+<%--        <input type="button" value="Отменить" onclick="window.history.go(-1)">--%>
     </form>
 </section>
 <jsp:include page="fragments/footer.jsp"/>

@@ -12,9 +12,13 @@
 </head>
 <body>
 <section>
-    <title>Имя, фамилия: ${resume.fullName}</title>
-    <h3>Имя, фамилия: ${resume.fullName}&nbsp;&nbsp;<a href="serv?uuid=${resume.uuid}&action=edit">Редактировать</a>
-    </h3>
+    <title>${resume.fullName}</title>
+    <h3>Имя, фамилия: ${resume.fullName}</h3>
+    <button class="key" onclick="window.history.back()">Назад</button>
+    <button class="key" onclick="location.href='serv?uuid=${resume.uuid}&action=edit'">Редактировать</button>
+
+    <br>
+    <br>
     <c:forEach items="${resume.contactsMap}" var="contactEntry">
         <jsp:useBean id="contactEntry"
                      type="java.util.Map.Entry<com.vitalykhan.webapps.model.ContactType, java.lang.String>"/>
@@ -22,7 +26,7 @@
         <%=HtmlUtil.getFullReference(contactEntry.getKey(), contactEntry.getValue())%>
         <br>
     </c:forEach>
-    <br>
+    <hr>
     <c:forEach items="${resume.sectionsMap}" var="sectionEntry">
         <jsp:useBean id="sectionEntry"
                      type="java.util.Map.Entry<com.vitalykhan.webapps.model.SectionType,
@@ -36,7 +40,7 @@
         </dl>
         <br>
     </c:forEach>
-
+    <button class="key" onclick="window.history.back()">Назад</button>
 
 </section>
 <jsp:include page="fragments/footer.jsp"/>
