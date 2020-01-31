@@ -46,4 +46,15 @@ public class HtmlUtil {
         }
     }
 
+    public static String getContent(SectionType type, Resume resume) {
+        Section section = resume.getSection(type);
+        return section == null ? "" : ((StringSection) resume.getSection(type)).getContent();
+    }
+
+    public static String getItems(SectionType type, Resume resume) {
+        Section section = resume.getSection(type);
+        return
+                section == null ? "" :
+                String.join("\n", ((ListSection) resume.getSection(type)).getItems());
+    }
 }
