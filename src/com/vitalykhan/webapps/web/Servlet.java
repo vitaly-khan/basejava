@@ -37,11 +37,12 @@ public class Servlet extends javax.servlet.http.HttpServlet {
             }
         }
         for (SectionType type : SectionType.values()) {
-            String[] parameters = request.getParameterValues(type.name());
+            String parameters = request.getParameter(type.name());
             if (parameters == null) {
                 continue;
             }
-            List<String> notNullValuesList = Arrays.stream(parameters)
+            parameters = parameters.replaceAll("\r","");
+            List<String> notNullValuesList = Arrays.stream(parameters.split("\n"))
                     .filter(x -> x.trim().length() > 0)
                     .collect(Collectors.toList());
             if (notNullValuesList.size() == 0) {
@@ -49,21 +50,15 @@ public class Servlet extends javax.servlet.http.HttpServlet {
                 continue;
             }
             switch (type) {
-                case PERSONAL:
                 case OBJECTIVE:
-                    if (notNullValuesList.size() == 1) {
-                        resume.addSection(type, new StringSection(parameters[0]));
-                    } else {
-                        resume.getSectionsMap().remove(type);
-                    }
+                case PERSONAL:
+                case HOBBIES:
+                        resume.addSection(type, new StringSection(parameters));
                     break;
+                case LANGUAGES:
                 case ACHIEVEMENT:
                 case QUALIFICATIONS:
-                    if (notNullValuesList.size() > 0) {
                         resume.addSection(type, new ListSection(notNullValuesList));
-                    } else {
-                        resume.getSectionsMap().remove(type);
-                    }
                 case EDUCATION:
                 case EXPERIENCE:
                     //TODO
@@ -96,7 +91,6 @@ public class Servlet extends javax.servlet.http.HttpServlet {
                 response.sendRedirect("serv");
                 return;
             case "new":
-//                r = new Resume(" ");
                 r = Resume.EMPTY;
                 break;
             case "edit":

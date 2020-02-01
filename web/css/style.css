@@ -20,6 +20,20 @@ body {
     color: black;
 }
 
+.colortext {
+    font-size: 85%;
+    color: darkgrey;
+    font-style: italic;
+}
+
+table {
+    border-spacing: 7px 2px; /* Расстояние между ячейками */
+}
+
+td {
+    padding: 5px; /* Поля вокруг текста */
+}
+
 button.key {
     color: #fff;
     background: green;
@@ -31,4 +45,9 @@ button.key {
 
 button.key:hover {
     background: limegreen;
+}
+
+ul {
+    margin-block-start: 5px;
+    margin-block-end: 5px;
 }

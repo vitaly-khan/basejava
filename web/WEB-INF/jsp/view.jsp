@@ -1,5 +1,5 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
-<%@ page import="com.vitalykhan.webapps.model.ContactType" %>
+<%@ page import="com.vitalykhan.webapps.model.ListSection" %>
 <%@ page import="com.vitalykhan.webapps.utils.HtmlUtil" %>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <jsp:include page="fragments/header.jsp"/>
@@ -31,12 +31,17 @@
                      type="java.util.Map.Entry<com.vitalykhan.webapps.model.SectionType,
                                                 com.vitalykhan.webapps.model.Section>"/>
         <b><%=sectionEntry.getKey().getTitle()%>: </b>
-<%--        --%>
-        <dl>
+        <ul>
             <c:forEach items="<%=HtmlUtil.sectionToHtmlList(sectionEntry.getValue())%>" var="entry">
-                <dd>${entry}</dd>
+                <c:choose>
+                    <c:when test="<%=sectionEntry.getValue().getClass() == ListSection.class%>">
+                        <li>${entry}</li>
+                    </c:when>
+                    <c:otherwise>${entry}</c:otherwise>
+                </c:choose>
+
             </c:forEach>
-        </dl>
+        </ul>
         <br>
     </c:forEach>
     <button class="key" onclick="window.history.back()">Назад</button>

@@ -116,7 +116,7 @@ public class SqlStorage implements Storage {
                     value = ((StringSection) section).getContent();
                 } else if (section instanceof ListSection) {
                     value = ((ListSection) section).getItems().stream()
-                            .filter(x->x.trim().length()>0)
+                            .filter(x -> x.trim().length() > 0)
                             .reduce("", (s, str) -> s.concat(str).concat("\n"));
                     value = value.substring(0, value.length() - 1);
                 }
@@ -165,17 +165,19 @@ public class SqlStorage implements Storage {
     }
 
     private void createAndAddSection(ResultSet rs, Resume resume) throws SQLException {
-        Section section = null;
+        Section section;
         SectionType type = SectionType.valueOf(rs.getString("type"));
         switch (type) {
-            case PERSONAL:
             case OBJECTIVE:
+            case PERSONAL:
+            case HOBBIES:
                 section = new StringSection(rs.getString("value"));
                 break;
             case ACHIEVEMENT:
             case QUALIFICATIONS:
+            case LANGUAGES:
                 section = new ListSection(new ArrayList<>(Arrays.asList(
-                        rs.getString("value").split("\r\n"))));
+                        rs.getString("value").split("\n"))));
                 break;
             case EXPERIENCE:
             case EDUCATION:
@@ -219,7 +221,7 @@ public class SqlStorage implements Storage {
                 while (rsContacts.next()) {
                     resumes.get(rsContacts.getString("resume_uuid"))
                             .addContact(ContactType.valueOf(rsContacts.getString("type")),
-                            rsContacts.getString("value"));
+                                    rsContacts.getString("value"));
                 }
 
                 ResultSet rsSections = psSections.executeQuery();

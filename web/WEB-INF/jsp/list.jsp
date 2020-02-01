@@ -8,17 +8,13 @@
     <meta http-equiv="Content-Type" content="text/html" charset="UTF-8">
     <link rel="stylesheet" href="css/style.css">
     <title>Resumes List</title>
-    <style>
-        .colortext {
-            color: darkgrey;
-            font-style: italic;
-        }
-    </style>
 </head>
 <body>
 <section>
     <h2>Список резюме</h2>
     <button class="key" onclick="location.href='serv?action=new'">Создать</button>
+    <br>
+    <br>
     <table cellspacing="15" cellpadding="5">
         <tr>
             <th>Имя</th>
